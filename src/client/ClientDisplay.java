@@ -14,30 +14,11 @@ public class ClientDisplay extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -385365104285393596L;
-	// Pour le dessin
 	ClientCanvas drawing;
-	MouseMotionListener mouvementSouris;
-	MouseEvent evenementSourisRecu;
-	String forme;
-	String formeRecue;
-	int taillePinceau;
-	int taillePinceauRecue;
-	Date lastModification;
 	Chat chatAndNetwork;
 	Tools tools;
-
-	// Administration
 	Menu menu;
-	boolean sauvegarde = false;
-	final JFileChooser fileChoice = new JFileChooser();
-	boolean dejaSauvegarde = false;
-	String fichierSauvegardeChemin;
-	boolean heber;
-	boolean admin;
-
-	/**
-	 * CONSTRUCTEUR
-	 */
+	
 	public ClientDisplay() {
 
 		// The window
