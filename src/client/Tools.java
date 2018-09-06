@@ -78,7 +78,7 @@ public class Tools extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().getClass() == (new JButton()).getClass()) {
+		if (e.getSource() instanceof JButton) {
 			shape = ((JButton) (e.getSource())).getText();
 		}
 		if (e.getSource() == sizeChoice) {

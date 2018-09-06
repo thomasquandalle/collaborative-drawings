@@ -1,8 +1,8 @@
 package client;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.swing.*;
 
@@ -18,6 +18,7 @@ public class ClientDisplay extends JFrame {
 	Chat chatAndNetwork;
 	Tools tools;
 	Menu menu;
+	ClientSocket networkSocket;
 	
 	public ClientDisplay() {
 
@@ -34,7 +35,7 @@ public class ClientDisplay extends JFrame {
 		tools = new Tools();
 		drawing = new ClientCanvas();
 		chatAndNetwork = new Chat();
-
+		
 		// Creating the layout
 		constraints.gridy = 0;
 		constraints.weightx = 1;
@@ -55,15 +56,39 @@ public class ClientDisplay extends JFrame {
 		add(drawing);
 		add(chatAndNetwork);
 		chatAndNetwork.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+	}
+	
+	public void connect() {
+		try {
+			networkSocket = new ClientSocket();
+			//Connecting the chat and the socket
+			networkSocket.setChat(chatAndNetwork);
+			chatAndNetwork.setSocket(networkSocket);
+			
+			//Connecting the canvas and the socket
+			networkSocket.setCanvas(drawing);
+			drawing.setSocket(networkSocket);
+			
+			//Connecting the tools panel and the socket. Only the socket needs the get methods from the tools
+			networkSocket.setTools(tools);
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public static void main(String[] args) {
 		ClientDisplay client = new ClientDisplay();
+		client.connect();
 		client.setBounds(0, 0, 2000, 2000);
 		client.setVisible(true);
-		
 		while(true) {
 			client.drawing.repaint();
+			client.networkSocket.handleRecep();
 		}
 
 	}

@@ -1,8 +1,13 @@
 package utils;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class DrawingInstruction {
+public class DrawingInstruction implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int x, y, size;
 	private String shape;
 	private Color color;
@@ -14,6 +19,15 @@ public class DrawingInstruction {
 		this.shape = shape;
 		this.color = color;
 
+	}
+	
+	public String toString() {
+		return ("Instruction: \n"
+				+ "x: " + x + "\n"
+				+ "y: " + y + "\n"
+				+ "shape: " + shape + "\n"
+				+ "size: " + size + "\n"
+				+ "color: " + color.toString() + "\n");
 	}
 
 	public int getX() {

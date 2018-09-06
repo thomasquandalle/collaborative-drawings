@@ -3,7 +3,6 @@ package client;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,7 +22,7 @@ public class Chat extends JPanel implements ActionListener {
 	private JLabel affichageChat;
 	private JScrollPane affichageInfosScroll;
 	private JTextArea affichageInfos;
-
+	private ClientSocket socket;
 	public Chat() {
 		super();
 		affichageInfos = new JTextArea("Liste des clients:");
@@ -54,6 +53,10 @@ public class Chat extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 
+	}
+
+	public void setSocket(ClientSocket networkSocket) {
+		socket = networkSocket;		
 	}
 
 }

@@ -16,9 +16,9 @@ public class ClientCanvas extends Canvas {
 	 * 
 	 */
 	private static final long serialVersionUID = -2822873274177188845L;
-	Color drawingColor;
-	MouseMotionListener mouseMovement;
-	Vector<DrawingInstruction> instructionList;
+	private MouseMotionListener mouseMovement;
+	private Vector<DrawingInstruction> instructionList;
+	private ClientSocket socket;
 
 	public ClientCanvas() {
 		super();
@@ -30,7 +30,7 @@ public class ClientCanvas extends Canvas {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				instructionList.add(new DrawingInstruction(e.getX(), e.getY(), 10, "square", Color.BLACK));
+				socket.sendInstruction(e.getX(), e.getY());
 			}
 		};
 
@@ -50,6 +50,13 @@ public class ClientCanvas extends Canvas {
 			g.setColor(current.getColor());
 			g.fillRect(current.getX(), current.getY(), current.getSize(), current.getSize());
 		}
+		instructionList = new Vector<DrawingInstruction>();
 	}
 
+	public void setSocket(ClientSocket networkSocket) {
+		socket = networkSocket;
+	}
+	public void addInstruction(DrawingInstruction instruction) {
+		instructionList.add(instruction);
+	}
 }
