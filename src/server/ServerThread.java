@@ -5,7 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Iterator;
+import java.util.Vector;
 
+import utils.*;
 
 public class ServerThread extends Thread {
 	private ObjectInputStream clientInput;
@@ -19,6 +22,12 @@ public class ServerThread extends Thread {
 	}
 
 	public void run() {
+		try {
+			synchronizeClientWithServer();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		while (true) {
 			try {
 				parent.sendToClients(clientInput.readObject());
@@ -32,7 +41,20 @@ public class ServerThread extends Thread {
 		}
 	}
 
-	public void sendToClient(Object toSend) throws IOException {
+	private void synchronizeClientWithServer() throws IOException {
+		Vector<DrawingInstruction> drawingLog = parent.getDrawingLog();
+		Vector<Message> messageLog = parent.getMessageLog();
+		Iterator<Message> messageIterator = messageLog.iterator();
+		while(messageIterator.hasNext()) {
+			sendToClient(messageIterator.next());
+		}
+		Iterator<DrawingInstruction> drawingIterator = drawingLog.iterator();
+		while(drawingIterator.hasNext()) {
+			sendToClient(drawingIterator.next());
+		}
+	}
+
+	public synchronized void sendToClient(Object toSend) throws IOException {
 		clientOutput.writeObject(toSend);
 		clientOutput.reset();
 		clientOutput.flush();

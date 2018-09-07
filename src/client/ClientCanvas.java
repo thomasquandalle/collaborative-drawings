@@ -31,9 +31,9 @@ public class ClientCanvas extends Canvas {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				ClientCanvas source = (ClientCanvas) (e.getSource());
-				double relativeX = ((e.getX()+0.0) / source.getWidth());
-				double relativeY = ((e.getY()+0.0) / source.getHeight());
-				if(relativeX <= 1  && relativeY <=1 && relativeX >= 0 && relativeY>=0 ) {
+				double relativeX = ((e.getX() + 0.0) / source.getWidth());
+				double relativeY = ((e.getY() + 0.0) / source.getHeight());
+				if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
 					socket.sendInstruction(relativeX, relativeY);
 				}
 			}
@@ -49,25 +49,25 @@ public class ClientCanvas extends Canvas {
 	}
 
 	public void paint(Graphics g) {
-		Iterator<DrawingInstruction> iter = instructionList.iterator();
-		while (iter.hasNext()) {
-			DrawingInstruction current = iter.next();
-			g.setColor(current.getColor());
-			adaptInstructionToCanvas();
-			int x = (int) Math.ceil(current.getX()*getWidth());
-			int y =  (int) Math.ceil(current.getY()*getHeight());
-			g.fillRect(x , y, current.getSize(), current.getSize());
-		}
-		instructionList = new Vector<DrawingInstruction>();
-	}
+		synchronized (instructionList) {
+			Iterator<DrawingInstruction> iter = instructionList.iterator();
+			while (iter.hasNext()) {
+				DrawingInstruction current = iter.next();
+				g.setColor(current.getColor());
+				int x = (int) Math.ceil(current.getX() * getWidth());
+				int y = (int) Math.ceil(current.getY() * getHeight());
+				g.fillRect(x, y, current.getSize(), current.getSize());
+			}
 
-	private void adaptInstructionToCanvas() {
-		
+			instructionList = new Vector<DrawingInstruction>();
+		}
+
 	}
 
 	public void setSocket(ClientSocket networkSocket) {
 		socket = networkSocket;
 	}
+
 	public void addInstruction(DrawingInstruction instruction) {
 		instructionList.add(instruction);
 	}
