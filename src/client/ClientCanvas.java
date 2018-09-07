@@ -36,9 +36,6 @@ public class ClientCanvas extends Canvas {
 				if(relativeX <= 1  && relativeY <=1 && relativeX >= 0 && relativeY>=0 ) {
 					socket.sendInstruction(relativeX, relativeY);
 				}
-				else {
-					System.out.println("Not in the canvas");
-				}
 			}
 		};
 
