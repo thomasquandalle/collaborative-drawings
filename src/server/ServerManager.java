@@ -1,8 +1,10 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -15,24 +17,44 @@ public class ServerManager extends JFrame {
 	private static final long serialVersionUID = 1L;
 	ServerSocket socket;
 	Vector<ServerThread> ThreadList;
-	JLabel nbClient;
-
+	JLabel infos;
+	String servInfo;
+	
 	public ServerManager() {
 		super("Server manager");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(400, 300);
 		ThreadList = new Vector<ServerThread>();
-		nbClient = new JLabel("0");
-		add(nbClient);
+		infos = new JLabel("");
+		add(infos);
 		try {
 			socket = new ServerSocket(9999);
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		writeInfos();
+	}
+	
+	private void writeInfos(){
+		try {
+			infos.setText(""
+					+ "<html>"
+						+ "<body>"
+							+ "Server is launched <br />"
+							+ "IP adress: "+ InetAddress.getLocalHost() +"<br />"
+							+"Port: " + socket.getLocalPort() + "<br />"
+							+"Clients connected: " + ThreadList.size()
+						+ "</body>"
+					+ "</html>");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) {
 		ServerManager server = new ServerManager();
+		
 		server.setVisible(true);
 		while (true) {
 			try {
@@ -48,12 +70,12 @@ public class ServerManager extends JFrame {
 		ServerThread newThread = new ServerThread(accept, this);
 		ThreadList.add(newThread);
 		newThread.start();
-		nbClient.setText(ThreadList.size()+"");
+		writeInfos();
 	}
 	
 	public void disconnectClient(ServerThread clientThread) {
 		ThreadList.removeElement(clientThread);
-		nbClient.setText(ThreadList.size()+"");
+		writeInfos();
 	}
 	
 	public void sendToClients(Object toSend) throws IOException {
