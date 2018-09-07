@@ -22,6 +22,7 @@ public class Chat extends JPanel implements ActionListener {
 	private JTextField chatEntry;
 	private JScrollPane scrollablePaneChat;
 	private JLabel chatDisplay;
+	private StringBuffer chatText;
 	private JScrollPane affichageInfosScroll;
 	private JTextArea affichageInfos;
 	private ClientSocket socket;
@@ -31,8 +32,8 @@ public class Chat extends JPanel implements ActionListener {
 		affichageInfos.setFocusable(false);
 		chatEntry = new JTextField("");
 		chatEntry.addActionListener(this);
-
-		chatDisplay = new JLabel("");
+		chatText = new StringBuffer();
+		chatDisplay = new JLabel(chatText.toString());
 		chatDisplay.setBackground(Color.white);
 		scrollablePaneChat = new JScrollPane(chatDisplay);
 		affichageInfosScroll = new JScrollPane(affichageInfos);
@@ -59,7 +60,16 @@ public class Chat extends JPanel implements ActionListener {
 	}
 
 	public void addTextMessage(Message message){
-		chatDisplay.setText(chatDisplay.getText()+"\n"+ message.getMessage());
+		
+		chatText = chatText.append("<br />" + message.getMessage());
+		String style = "style = \" width:" + chatDisplay.getPreferredSize() + "\"";
+		chatDisplay.setText(""
+				+ "<html>"
+					+ "<body "+ style + ">"
+						+ "<p \"+ style + \">"+ chatText+"</p>"
+					+ "</body>"
+				+ "</html>"
+				);
 	}
 	public void setSocket(ClientSocket networkSocket) {
 		socket = networkSocket;		
