@@ -25,36 +25,23 @@ public class ClientDisplay extends JFrame {
 		// The window
 		super("Collaborative drawing");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints constraints = new GridBagConstraints();
+		GridLayout layout = new GridLayout(1,0);
 		setBackground(Color.white);
-		setLayout(gridbag);
+		setLayout(layout);
 
 		// Creating components
 		menu = new Menu();
 		tools = new Tools();
 		drawing = new ClientCanvas();
 		chatAndNetwork = new Chat();
-		
-		// Creating the layout
-		constraints.gridy = 0;
-		constraints.weightx = 1;
-		constraints.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(tools, constraints);
-
-		constraints.weightx = 2;
-		gridbag.setConstraints(drawing, constraints);
-
-		constraints.weighty = 1;
-		gridbag.setConstraints(chatAndNetwork, constraints);
 
 		// Setting borders
 		setJMenuBar(menu);
 		add(tools);
 		tools.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		tools.setColorChooser(Color.BLUE);
-		add(drawing);
-		add(chatAndNetwork);
+		add(drawing, layout);
+		add(chatAndNetwork, layout);
 		chatAndNetwork.setBorder(BorderFactory.createLineBorder(Color.black));
 		
 	}

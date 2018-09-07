@@ -30,7 +30,15 @@ public class ClientCanvas extends Canvas {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				socket.sendInstruction(e.getX(), e.getY());
+				ClientCanvas source = (ClientCanvas) (e.getSource());
+				double relativeX = ((e.getX()+0.0) / source.getWidth());
+				double relativeY = ((e.getY()+0.0) / source.getHeight());
+				if(relativeX <= 1  && relativeY <=1 && relativeX >= 0 && relativeY>=0 ) {
+					socket.sendInstruction(relativeX, relativeY);
+				}
+				else {
+					System.out.println("Not in the canvas");
+				}
 			}
 		};
 
@@ -48,9 +56,16 @@ public class ClientCanvas extends Canvas {
 		while (iter.hasNext()) {
 			DrawingInstruction current = iter.next();
 			g.setColor(current.getColor());
-			g.fillRect(current.getX(), current.getY(), current.getSize(), current.getSize());
+			adaptInstructionToCanvas();
+			int x = (int) Math.ceil(current.getX()*getWidth());
+			int y =  (int) Math.ceil(current.getY()*getHeight());
+			g.fillRect(x , y, current.getSize(), current.getSize());
 		}
 		instructionList = new Vector<DrawingInstruction>();
+	}
+
+	private void adaptInstructionToCanvas() {
+		
 	}
 
 	public void setSocket(ClientSocket networkSocket) {

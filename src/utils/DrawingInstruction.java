@@ -8,13 +8,14 @@ public class DrawingInstruction implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int x, y, size;
+	private double x, y;
+	private int size;
 	private String shape;
 	private Color color;
 
-	public DrawingInstruction(int x, int y, int size, String shape, Color color) {
-		this.x = x;
-		this.y = y;
+	public DrawingInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
+		this.x = relativeX;
+		this.y = relativeY;
 		this.size = size;
 		this.shape = shape;
 		this.color = color;
@@ -30,11 +31,11 @@ public class DrawingInstruction implements Serializable{
 				+ "color: " + color.toString() + "\n");
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 

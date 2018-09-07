@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import utils.Message;
+
 public class Chat extends JPanel implements ActionListener {
 	/**
 	 * 
@@ -19,20 +21,20 @@ public class Chat extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private JTextField chatEntry;
 	private JScrollPane scrollablePaneChat;
-	private JLabel affichageChat;
+	private JLabel chatDisplay;
 	private JScrollPane affichageInfosScroll;
 	private JTextArea affichageInfos;
 	private ClientSocket socket;
 	public Chat() {
 		super();
-		affichageInfos = new JTextArea("Liste des clients:");
+		affichageInfos = new JTextArea("Clients list");
 		affichageInfos.setFocusable(false);
 		chatEntry = new JTextField("");
 		chatEntry.addActionListener(this);
 
-		affichageChat = new JLabel("");
-		affichageChat.setBackground(Color.white);
-		scrollablePaneChat = new JScrollPane(affichageChat);
+		chatDisplay = new JLabel("");
+		chatDisplay.setBackground(Color.white);
+		scrollablePaneChat = new JScrollPane(chatDisplay);
 		affichageInfosScroll = new JScrollPane(affichageInfos);
 
 		GridBagLayout gridbagRes = new GridBagLayout();
@@ -52,9 +54,13 @@ public class Chat extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-
+		socket.sendMessage(chatEntry.getText());
+		chatEntry.setText("");
 	}
 
+	public void addTextMessage(Message message){
+		chatDisplay.setText(chatDisplay.getText()+"\n"+ message.getMessage());
+	}
 	public void setSocket(ClientSocket networkSocket) {
 		socket = networkSocket;		
 	}

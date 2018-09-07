@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import utils.DrawingInstruction;
+import utils.Message;
 
 public class ClientSocket extends Socket {
 
@@ -58,9 +59,19 @@ public class ClientSocket extends Socket {
 		this.tools = tools;
 	}
 
-	public void sendInstruction(int x, int y) {
-		DrawingInstruction toSend  = new DrawingInstruction(x, y, tools.getSizePencil(), tools.getShape(), tools.getColorChosen());
-		System.out.println(toSend);
+	public void sendInstruction(double relativeX, double relativeY) {
+		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, tools.getSizePencil(), tools.getShape(), tools.getColorChosen());
+		try {
+			outputStream.writeObject(toSend);
+			outputStream.reset();
+			outputStream.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendMessage(String message) {
+		Message toSend  = new Message("Thomas", message);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();
@@ -76,12 +87,13 @@ public class ClientSocket extends Socket {
 			if(reception instanceof DrawingInstruction) {
 				drawing.addInstruction((DrawingInstruction) reception);
 			}
+			if(reception instanceof Message) {
+				clientChat.addTextMessage((Message)(reception));
+			}
 			
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
-		}
-
-		
+		}		
 	}
 
 }
