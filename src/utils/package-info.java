@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author thomasquandalle
- *
- */
-package utils;

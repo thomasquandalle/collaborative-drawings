@@ -55,6 +55,7 @@ public class ServerThread extends Thread {
 	}
 
 	public synchronized void sendToClient(Object toSend) throws IOException {
+		System.out.println("Sending");
 		clientOutput.writeObject(toSend);
 		clientOutput.reset();
 		clientOutput.flush();

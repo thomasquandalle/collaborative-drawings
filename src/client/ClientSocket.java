@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import javafx.scene.paint.Color;
 import utils.DrawingInstruction;
 import utils.Message;
 
@@ -13,24 +15,13 @@ public class ClientSocket extends Socket {
 
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
-	private Chat clientChat;
-	private ClientCanvas drawing;
-	private Tools tools;
+	private SocketListener clientListener;
 
-
-	public ClientSocket() throws UnknownHostException, IOException {
+	public ClientSocket(SocketListener listener) throws UnknownHostException, IOException {
 		super(InetAddress.getLocalHost(), 9999);
 		initStreams();
-	}
-
-	public ClientSocket(String arg0, int arg1) throws UnknownHostException, IOException {
-		super(arg0, arg1);
-		initStreams();
-	}
-
-	public ClientSocket(InetAddress arg0, int arg1) throws IOException {
-		super(arg0, arg1);
-		initStreams();
+        clientListener = listener;
+		startListening();
 	}
 	
 	private void initStreams() {
@@ -46,21 +37,14 @@ public class ClientSocket extends Socket {
 		}
 
 	}
-	
-	public void setChat(Chat chatAndNetwork) {
-		clientChat = chatAndNetwork;
-	}
 
-	public void setCanvas(ClientCanvas drawing) {
-		this.drawing = drawing;
-	}
+	private void startListening(){
+        ListenerThread listenerThread = new ListenerThread(inputStream, clientListener);
+        listenerThread.start();
+    }
 
-	public void setTools(Tools tools) {
-		this.tools = tools;
-	}
-
-	public void sendInstruction(double relativeX, double relativeY) {
-		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, tools.getSizePencil(), tools.getShape(), tools.getColorChosen());
+	public void sendInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
+		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, size, shape, color);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();
@@ -71,29 +55,37 @@ public class ClientSocket extends Socket {
 	}
 	
 	public void sendMessage(String message) {
+	    System.out.println("Sending");
 		Message toSend  = new Message("Thomas", message);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();
 			outputStream.flush();
+			System.out.println("Sent");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void handleRecep() {
-		try {
-			Object reception = inputStream.readObject();
-			if(reception instanceof DrawingInstruction) {
-				drawing.addInstruction((DrawingInstruction) reception);
-			}
-			if(reception instanceof Message) {
-				clientChat.addTextMessage((Message)(reception));
-			}
-			
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-		}		
-	}
+}
 
+class ListenerThread extends Thread{
+    private ObjectInputStream inputStream;
+    SocketListener inputHandler;
+    public ListenerThread(ObjectInputStream stream, SocketListener handler){
+        inputStream = stream;
+        inputHandler = handler;
+    }
+
+    public void run(){
+        while(true){
+            try {
+                inputHandler.handleRecep(inputStream.readObject());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

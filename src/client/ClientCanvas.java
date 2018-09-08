@@ -1,74 +1,40 @@
 package client;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import utils.DrawingInstruction;
+
 import java.util.Iterator;
 import java.util.Vector;
 
-import utils.DrawingInstruction;
-
 public class ClientCanvas extends Canvas {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2822873274177188845L;
-	private MouseMotionListener mouseMovement;
-	private Vector<DrawingInstruction> instructionList;
-	private ClientSocket socket;
+    private Vector<DrawingInstruction> instructionsList;
 
-	public ClientCanvas() {
-		super();
+    public ClientCanvas(){
+        instructionsList = new Vector <DrawingInstruction>();
+    }
+    private void draw() {
+        synchronized (instructionsList) {
+            GraphicsContext g = getGraphicsContext2D();
+            Iterator<DrawingInstruction> iterator = instructionsList.iterator();
+            while (iterator.hasNext()) {
+                DrawingInstruction current = iterator.next();
+                g.setFill(current.getColor());
+                int x = (int) Math.ceil(current.getX() * getWidth());
+                int y = (int) Math.ceil(current.getY() * getHeight());
+                g.fillRect(x, y, current.getSize(), current.getSize());
+            }
 
-		instructionList = new Vector<DrawingInstruction>();
-		mouseMovement = new MouseMotionListener() {
-			public void mouseMoved(MouseEvent e) {
-			}
+            instructionsList = new Vector<DrawingInstruction>();
+        }
+    }
 
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				ClientCanvas source = (ClientCanvas) (e.getSource());
-				double relativeX = ((e.getX() + 0.0) / source.getWidth());
-				double relativeY = ((e.getY() + 0.0) / source.getHeight());
-				if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
-					socket.sendInstruction(relativeX, relativeY);
-				}
-			}
-		};
+    public void update(){
+        draw();
+    }
 
-		setBackground(Color.WHITE);
-
-		addMouseMotionListener(mouseMovement);
-	}
-
-	public void update(Graphics g) {
-		paint(g);
-	}
-
-	public void paint(Graphics g) {
-		synchronized (instructionList) {
-			Iterator<DrawingInstruction> iter = instructionList.iterator();
-			while (iter.hasNext()) {
-				DrawingInstruction current = iter.next();
-				g.setColor(current.getColor());
-				int x = (int) Math.ceil(current.getX() * getWidth());
-				int y = (int) Math.ceil(current.getY() * getHeight());
-				g.fillRect(x, y, current.getSize(), current.getSize());
-			}
-
-			instructionList = new Vector<DrawingInstruction>();
-		}
-
-	}
-
-	public void setSocket(ClientSocket networkSocket) {
-		socket = networkSocket;
-	}
-
-	public void addInstruction(DrawingInstruction instruction) {
-		instructionList.add(instruction);
-	}
+    public void addInstruction(DrawingInstruction instruction) {
+        instructionsList.add(instruction);
+    }
 }

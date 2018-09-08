@@ -1,7 +1,9 @@
 package utils;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 public class Message implements Serializable {
 	
@@ -18,6 +20,8 @@ public class Message implements Serializable {
 	}
 
 	public String getMessage() {
-		return date + " - " + sender + ": " + message;
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		String s = format.format(date) + " - " + sender + ": " + message;
+		return s;
 	}
 }

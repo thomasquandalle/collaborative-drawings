@@ -1,6 +1,6 @@
 package utils;
 
-import java.awt.Color;
+import javafx.scene.paint.Color;
 import java.io.Serializable;
 
 public class DrawingInstruction implements Serializable{
@@ -10,15 +10,17 @@ public class DrawingInstruction implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private double x, y;
 	private int size;
+	private double red, green, blue;
 	private String shape;
-	private Color color;
 
 	public DrawingInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
 		this.x = relativeX;
 		this.y = relativeY;
 		this.size = size;
 		this.shape = shape;
-		this.color = color;
+		this.red = color.getRed();
+		this.green = color.getGreen();
+		this.blue = color.getBlue();
 
 	}
 	
@@ -28,7 +30,7 @@ public class DrawingInstruction implements Serializable{
 				+ "y: " + y + "\n"
 				+ "shape: " + shape + "\n"
 				+ "size: " + size + "\n"
-				+ "color: " + color.toString() + "\n");
+				+ "color: " + red + "," + green + "," + blue + "\n");
 	}
 
 	public double getX() {
@@ -48,6 +50,6 @@ public class DrawingInstruction implements Serializable{
 	}
 
 	public Color getColor() {
-		return color;
+		return new Color(red, green, blue, 1);
 	}
 }
