@@ -25,12 +25,9 @@ public class ClientSocket extends Socket {
 	}
 	
 	private void initStreams() {
-		System.out.println("Initialzing");
 		try {
 			outputStream = new ObjectOutputStream(getOutputStream());
-			System.out.println("Initialized");
 			inputStream = new ObjectInputStream(getInputStream());
-			System.out.println("Initialized");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,13 +52,11 @@ public class ClientSocket extends Socket {
 	}
 	
 	public void sendMessage(String message) {
-	    System.out.println("Sending");
 		Message toSend  = new Message("Thomas", message);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();
 			outputStream.flush();
-			System.out.println("Sent");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
