@@ -1,5 +1,6 @@
 package server;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,7 +33,7 @@ public class ServerThread extends Thread {
 			try {
 				parent.sendToClients(clientInput.readObject());
 			} catch (ClassNotFoundException | IOException e) {
-				if (e instanceof SocketException) {
+				if (e instanceof SocketException || e instanceof EOFException) {
 					parent.disconnectClient(this);
 					break;
 				}
