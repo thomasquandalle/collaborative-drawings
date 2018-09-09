@@ -1,5 +1,6 @@
 package utils;
 
+import client.Shape;
 import javafx.scene.paint.Color;
 import java.io.Serializable;
 
@@ -11,9 +12,9 @@ public class DrawingInstruction implements Serializable{
 	private double x, y;
 	private int size;
 	private double red, green, blue;
-	private String shape;
+	private Shape shape;
 
-	public DrawingInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
+	public DrawingInstruction(double relativeX, double relativeY, int size, Shape shape, Color color) {
 		this.x = relativeX;
 		this.y = relativeY;
 		this.size = size;
@@ -45,7 +46,7 @@ public class DrawingInstruction implements Serializable{
 		return size;
 	}
 
-	public String getShape() {
+	public Shape getShape() {
 		return shape;
 	}
 

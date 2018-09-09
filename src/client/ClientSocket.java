@@ -40,7 +40,7 @@ class ClientSocket extends Socket {
         listenerThread.start();
     }
 
-	void sendInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
+	void sendInstruction(double relativeX, double relativeY, int size, Shape shape, Color color) {
 		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, size, shape, color);
 		try {
             sendToServer(toSend);
