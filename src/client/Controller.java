@@ -95,13 +95,15 @@ public class Controller
         chatEntry.setDisable(true);
 
 
-        clientCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED,
+        clientCanvas.addEventHandler(MouseEvent.ANY,
                 e -> {
-                    double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
-                    double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
-                    if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
-                        socket.sendInstruction(relativeX, relativeY, sizePicker.getValue(), INITIAL_SHAPE, colorPicker.getValue());
-                    }
+            if(e.getEventType() == MouseEvent.MOUSE_DRAGGED){
+                double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
+                double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
+                if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
+                    socket.sendInstruction(relativeX, relativeY, sizePicker.getValue(), INITIAL_SHAPE, colorPicker.getValue());
+                }
+            }
                 });
 
         colorPicker.setValue(new Color(0,0,0,1));
