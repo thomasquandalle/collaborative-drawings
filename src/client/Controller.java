@@ -1,12 +1,12 @@
 package client;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 import utils.DrawingInstruction;
 import utils.Message;
 
@@ -16,8 +16,16 @@ import java.io.IOException;
 public class Controller
 {
     /* =================================
+            Constant variables
+==================================== */
+
+    private final int MAX_SIZE = 20;
+    private final int INITIAL_SIZE = 5;
+
+    /* =================================
                 FXLM variables
     ==================================== */
+
     @FXML
     private ColorPicker colorPicker;
     @FXML
@@ -28,6 +36,8 @@ public class Controller
     private TextField chatEntry;
     @FXML
     private TextField username;
+    @FXML
+    ComboBox<Integer> sizePicker;
 
     /* ==========================
             Custom variables
@@ -41,16 +51,16 @@ public class Controller
         listener = new SocketListener(this);
     }
 
-    public void addMessage(Message message){
+    void addMessage(Message message){
         outputText.setText(outputText.getText()+"\n"+message.getMessage());
     }
 
-    public void addInstruction(DrawingInstruction instruction){
+    void addInstruction(DrawingInstruction instruction){
         clientCanvas.addInstruction(instruction);
         clientCanvas.update();
     }
 
-    public void disconnectSocket(){
+    void disconnectSocket(){
         socket.disconnect();
     }
 
@@ -58,12 +68,18 @@ public class Controller
     private void initialize()
     {
 
+        //Initializing ComboBox
+        for(int i = 1; i<MAX_SIZE; i++ ){
+            sizePicker.getItems().add(i);
+        };
+        sizePicker.setValue(INITIAL_SIZE);
+
         clientCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED,
                 e -> {
                     double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
                     double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
                     if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
-                        socket.sendInstruction(relativeX, relativeY, 10, "square", colorPicker.getValue());
+                        socket.sendInstruction(relativeX, relativeY, sizePicker.getValue(), "square", colorPicker.getValue());
                     }
                 });
 
