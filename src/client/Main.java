@@ -2,11 +2,14 @@ package client;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Main extends Application
 {
@@ -29,8 +32,15 @@ public class Main extends Application
         stage.setScene(scene);
         // Set the Title to the Stage
         stage.setTitle("Collaborative drawings with JavaFx");
+
+        //Need to disconnect the sockets when leaving
+        stage.setOnCloseRequest(event -> {
+            Controller connectedController = (Controller) (loader.getController());
+            connectedController.disconnectSocket();
+        });
         // Display the Stage
         stage.show();
+
 
     }
 }

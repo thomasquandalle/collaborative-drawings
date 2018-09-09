@@ -51,6 +51,11 @@ public class Controller
         clientCanvas.addInstruction(instruction);
         clientCanvas.update();
     }
+
+    public void disconnectSocket(){
+        socket.disconnect();
+    }
+
     @FXML
     private void initialize()
     {
@@ -77,6 +82,7 @@ public class Controller
         Color x = colorPicker.getValue();
         clientCanvas.getGraphicsContext2D().setFill(x);
     }
+
 
     @FXML
     private void sendMessage() {

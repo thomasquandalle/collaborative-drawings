@@ -1,5 +1,6 @@
 package client;
 
+import gherkin.lexer.Listener;
 import javafx.scene.paint.Color;
 import utils.DrawingInstruction;
 import utils.Message;
@@ -15,6 +16,7 @@ public class ClientSocket extends Socket {
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 	private SocketListener clientListener;
+	private ListenerThread listenerThread;
 
 	public ClientSocket(SocketListener listener) throws IOException {
 		super(InetAddress.getLocalHost(), 9999);
@@ -35,7 +37,7 @@ public class ClientSocket extends Socket {
 	}
 
 	private void startListening(){
-        ListenerThread listenerThread = new ListenerThread(inputStream, clientListener);
+        listenerThread = new ListenerThread(inputStream, clientListener);
         listenerThread.start();
     }
 
@@ -65,6 +67,16 @@ public class ClientSocket extends Socket {
 		}
 	}
 
+    public void disconnect() {
+        listenerThread.disconnect();
+        try {
+            inputStream.close();
+            outputStream.close();
+            close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 class ListenerThread extends Thread{
@@ -88,6 +100,7 @@ class ListenerThread extends Thread{
                 e.printStackTrace();
             }
         }
+        return;
     }
 
     public void disconnect(){
