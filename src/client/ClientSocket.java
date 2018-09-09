@@ -52,12 +52,12 @@ public class ClientSocket extends Socket {
 		}
 	}
 	
-	public void sendMessage(String message) {
+	public void sendMessage(String message, String sender) {
 	    String trimmedMessage = message.trim();
 	    if(trimmedMessage.equalsIgnoreCase("")){
 	        return;
         }
-		Message toSend  = new Message("Thomas", trimmedMessage);
+		Message toSend  = new Message(sender, trimmedMessage);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();

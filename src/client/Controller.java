@@ -1,5 +1,6 @@
 package client;
 
+import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -18,25 +19,22 @@ public class Controller
                 FXLM variables
     ==================================== */
     @FXML
-    // The reference of inputText will be injected by the FXML loader
     private ColorPicker colorPicker;
-
-    // The reference of outputText will be injected by the FXML loader
     @FXML
     private Text outputText;
-
     @FXML
     private ClientCanvas clientCanvas;
-
     @FXML
     private TextField chatEntry;
+    @FXML
+    private TextField username;
 
-    private ClientSocket socket;
-    private SocketListener listener;
     /* ==========================
             Custom variables
     ============================== */
 
+    private ClientSocket socket;
+    private SocketListener listener;
 
     public Controller()
     {
@@ -86,7 +84,7 @@ public class Controller
 
     @FXML
     private void sendMessage() {
-        socket.sendMessage(chatEntry.getText());
+        socket.sendMessage(chatEntry.getText(), username.getText());
         chatEntry.setText("");
     }
 
@@ -97,5 +95,16 @@ public class Controller
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void setUsername() {
+        String trimmedUsername = username.getText().trim();
+        if(trimmedUsername.equalsIgnoreCase("")){
+            username.setText("Anonymous");
+            return;
+        }
+        username.setText(trimmedUsername);
+        username.setDisable(true);
     }
 }

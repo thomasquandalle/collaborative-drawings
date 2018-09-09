@@ -11,6 +11,7 @@
 <?import javafx.scene.text.TextFlow?>
 
 <?import client.ClientCanvas?>
+<?import javafx.scene.control.Label?>
 <HBox maxHeight="1.7976931348623157E308" maxWidth="1200.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
    <children>
       <VBox maxHeight="800.0" maxWidth="200.0" minHeight="100.0" minWidth="100.0" HBox.hgrow="ALWAYS">
@@ -29,7 +30,13 @@
       </AnchorPane>
       <VBox maxHeight="800.0" maxWidth="200.0" minHeight="100.0" minWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
-            <ScrollPane hbarPolicy="NEVER" hvalue="1.0" prefHeight="775.0" prefWidth="154.0" vbarPolicy="ALWAYS" vvalue="1.0">
+            <HBox prefHeight="25.0" prefWidth="200.0">
+               <children>
+                  <Label prefHeight="25.0" prefWidth="78.0" text="Username:" />
+                  <TextField fx:id="username" onAction="#setUsername" alignment="TOP_LEFT" promptText="Username" text="Anonymous" />
+               </children>
+            </HBox>
+            <ScrollPane hbarPolicy="NEVER" hvalue="1.0" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="1.0">
                <content>
                   <TextFlow prefHeight="700.0" prefWidth="185.0">
                      <children>
