@@ -1,12 +1,10 @@
 package client;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 import utils.DrawingInstruction;
 import utils.Message;
 
@@ -19,8 +17,9 @@ public class Controller
             Constant variables
 ==================================== */
 
-    private final int MAX_SIZE = 20;
-    private final int INITIAL_SIZE = 5;
+    private static final int MAX_SIZE = 20;
+    private static final int INITIAL_SIZE = 5;
+    private static final String SYSTEM_NAME = "System";
 
     /* =================================
                 FXLM variables
@@ -38,6 +37,8 @@ public class Controller
     private TextField username;
     @FXML
     ComboBox<Integer> sizePicker;
+    @FXML
+    Button connect;
 
     /* ==========================
             Custom variables
@@ -45,6 +46,8 @@ public class Controller
 
     private ClientSocket socket;
     private SocketListener listener;
+    private boolean connected;
+    private String userName;
 
     public Controller()
     {
@@ -52,6 +55,11 @@ public class Controller
     }
 
     void addMessage(Message message){
+        //First message
+        if(outputText.getText().equalsIgnoreCase("")){
+            outputText.setText(message.getMessage());
+            return;
+        }
         outputText.setText(outputText.getText()+"\n"+message.getMessage());
     }
 
@@ -61,7 +69,9 @@ public class Controller
     }
 
     void disconnectSocket(){
-        socket.disconnect();
+        if(connected){
+            socket.disconnect();
+        }
     }
 
     @FXML
@@ -74,6 +84,11 @@ public class Controller
         };
         sizePicker.setValue(INITIAL_SIZE);
 
+        //Disable as long as you're not connected
+        clientCanvas.setDisable(true);
+        chatEntry.setDisable(true);
+
+
         clientCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED,
                 e -> {
                     double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
@@ -83,10 +98,9 @@ public class Controller
                     }
                 });
 
-
         colorPicker.setValue(new Color(0,0,0,1));
 
-        connect();
+        userName = username.getText();
     }
 
 
@@ -106,10 +120,16 @@ public class Controller
 
     @FXML
     private void connect(){
+        connect.setDisable(true);
         try {
             socket = new ClientSocket(listener);
+            chatEntry.setDisable(false);
+            clientCanvas.setDisable(false);
+            connected  = true;
+            socket.sendMessage(username.getText() + " just connected to the server", SYSTEM_NAME);
         } catch (IOException e) {
-            e.printStackTrace();
+            addMessage(new Message(SYSTEM_NAME, "Couldn't connect to the server, please try again"));
+            connect.setDisable(false);
         }
     }
 
@@ -120,7 +140,9 @@ public class Controller
             username.setText("Anonymous");
             return;
         }
+        socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
+        userName = trimmedUsername;
         username.setText(trimmedUsername);
-        username.setDisable(true);
+
     }
 }
