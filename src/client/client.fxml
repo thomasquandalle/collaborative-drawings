@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.ColorPicker?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
 
 <?import client.ClientCanvas?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 <HBox maxHeight="1.7976931348623157E308" maxWidth="1200.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
    <children>
       <VBox maxHeight="800.0" maxWidth="200.0" minHeight="100.0" minWidth="100.0" HBox.hgrow="ALWAYS">
@@ -29,11 +27,15 @@
       </AnchorPane>
       <VBox maxHeight="800.0" maxWidth="200.0" minHeight="100.0" minWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
-            <TextFlow prefHeight="825.0" prefWidth="200.0">
-               <children>
-                  <Text fx:id="outputText" strokeType="OUTSIDE" strokeWidth="0.0" text="System: Welcome !" />
-               </children>
-            </TextFlow>
+            <ScrollPane hbarPolicy="NEVER"  prefHeight="775.0" prefWidth="154.0" vbarPolicy="ALWAYS" vvalue="1.0">
+               <content>
+                  <TextFlow prefHeight="700.0" prefWidth="185.0">
+                     <children>
+                        <Text fx:id="outputText" strokeType="OUTSIDE" strokeWidth="0.0" text="System: Welcome !" />
+                     </children>
+                  </TextFlow>
+               </content>
+            </ScrollPane>
             <TextField fx:id="chatEntry" alignment="TOP_LEFT" onAction="#sendMessage" promptText="Type here" />
          </children>
       </VBox>
