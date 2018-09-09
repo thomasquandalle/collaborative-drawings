@@ -1,15 +1,14 @@
 package client;
 
+import javafx.scene.paint.Color;
+import utils.DrawingInstruction;
+import utils.Message;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-
-import javafx.scene.paint.Color;
-import utils.DrawingInstruction;
-import utils.Message;
 
 public class ClientSocket extends Socket {
 
@@ -17,7 +16,7 @@ public class ClientSocket extends Socket {
 	private ObjectOutputStream outputStream;
 	private SocketListener clientListener;
 
-	public ClientSocket(SocketListener listener) throws UnknownHostException, IOException {
+	public ClientSocket(SocketListener listener) throws IOException {
 		super(InetAddress.getLocalHost(), 9999);
 		initStreams();
         clientListener = listener;
@@ -52,7 +51,11 @@ public class ClientSocket extends Socket {
 	}
 	
 	public void sendMessage(String message) {
-		Message toSend  = new Message("Thomas", message);
+	    String trimmedMessage = message.trim();
+	    if(trimmedMessage.equalsIgnoreCase("")){
+	        return;
+        }
+		Message toSend  = new Message("Thomas", trimmedMessage);
 		try {
 			outputStream.writeObject(toSend);
 			outputStream.reset();
@@ -66,21 +69,28 @@ public class ClientSocket extends Socket {
 
 class ListenerThread extends Thread{
     private ObjectInputStream inputStream;
-    SocketListener inputHandler;
+    private SocketListener inputHandler;
+    private boolean connected; //Will be useful in the future to disconnect
+
     public ListenerThread(ObjectInputStream stream, SocketListener handler){
         inputStream = stream;
         inputHandler = handler;
+        connected = true;
     }
 
     public void run(){
-        while(true){
+        while(connected){
             try {
                 inputHandler.handleRecep(inputStream.readObject());
             } catch (IOException e) {
-                e.printStackTrace();
+                disconnect();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void disconnect(){
+        connected = false;
     }
 }
