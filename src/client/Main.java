@@ -24,7 +24,7 @@ public class Main extends Application
         // Create the Pane and all Details
         FXMLLoader loader = new FXMLLoader(getClass().getResource("client.fxml"));
         Pane root =  loader.load();
-        stage.setMaxWidth(1200);
+        stage.setMaxWidth(1400);
         stage.setMaxHeight(800);
         // Create the Scene
         Scene scene = new Scene(root);
