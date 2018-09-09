@@ -19,5 +19,8 @@ public class SocketListener {
             if(reception instanceof Message) {
                 controller.addMessage((Message)(reception));
             }
+            if(reception instanceof IOException) {
+                controller.disconnectSocket();
+            }
     }
 }

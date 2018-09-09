@@ -71,7 +71,12 @@ public class Controller
     void disconnectSocket(){
         if(connected){
             socket.disconnect();
+            connected = false;
         }
+        clientCanvas.setDisable(true);
+        chatEntry.setDisable(true);
+        connect.setDisable(false);
+        addMessage(new Message(SYSTEM_NAME, "You've been disconnected from the server"));
     }
 
     @FXML

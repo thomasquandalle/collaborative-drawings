@@ -1,6 +1,5 @@
 package client;
 
-import gherkin.lexer.Listener;
 import javafx.scene.paint.Color;
 import utils.DrawingInstruction;
 import utils.Message;
@@ -11,14 +10,14 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ClientSocket extends Socket {
+class ClientSocket extends Socket {
 
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 	private SocketListener clientListener;
 	private ListenerThread listenerThread;
 
-	public ClientSocket(SocketListener listener) throws IOException {
+	ClientSocket(SocketListener listener) throws IOException {
 		super(InetAddress.getLocalHost(), 9999);
 		initStreams();
         clientListener = listener;
@@ -41,33 +40,35 @@ public class ClientSocket extends Socket {
         listenerThread.start();
     }
 
-	public void sendInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
+	void sendInstruction(double relativeX, double relativeY, int size, String shape, Color color) {
 		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, size, shape, color);
 		try {
-			outputStream.writeObject(toSend);
-			outputStream.reset();
-			outputStream.flush();
+            sendToServer(toSend);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void sendMessage(String message, String sender) {
+	void sendMessage(String message, String sender) {
 	    String trimmedMessage = message.trim();
 	    if(trimmedMessage.equalsIgnoreCase("")){
 	        return;
         }
 		Message toSend  = new Message(sender, trimmedMessage);
 		try {
-			outputStream.writeObject(toSend);
-			outputStream.reset();
-			outputStream.flush();
+			sendToServer(toSend);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-    public void disconnect() {
+	private void sendToServer(Object toSend) throws IOException {
+        outputStream.writeObject(toSend);
+        outputStream.reset();
+        outputStream.flush();
+    }
+
+    void disconnect() {
         listenerThread.disconnect();
         try {
             inputStream.close();
@@ -84,7 +85,7 @@ class ListenerThread extends Thread{
     private SocketListener inputHandler;
     private boolean connected; //Will be useful in the future to disconnect
 
-    public ListenerThread(ObjectInputStream stream, SocketListener handler){
+    ListenerThread(ObjectInputStream stream, SocketListener handler){
         inputStream = stream;
         inputHandler = handler;
         connected = true;
@@ -95,15 +96,15 @@ class ListenerThread extends Thread{
             try {
                 inputHandler.handleRecep(inputStream.readObject());
             } catch (IOException e) {
-                disconnect();
+                inputHandler.handleRecep(e);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        return;
     }
 
-    public void disconnect(){
+    void disconnect(){
         connected = false;
     }
+
 }
