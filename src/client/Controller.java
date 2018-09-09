@@ -1,8 +1,5 @@
 package client;
 
-import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -57,18 +54,17 @@ public class Controller
     @FXML
     private void initialize()
     {
-        final GraphicsContext gc = clientCanvas.getGraphicsContext2D();
+
         clientCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED,
-                new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent e) {
-                        double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
-                        double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
-                        if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
-                            socket.sendInstruction(relativeX, relativeY, 10, "square", colorPicker.getValue());
-                        }
+                e -> {
+                    double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
+                    double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
+                    if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
+                        socket.sendInstruction(relativeX, relativeY, 10, "square", colorPicker.getValue());
                     }
                 });
+
+
         colorPicker.setValue(new Color(0,0,0,1));
 
         connect();

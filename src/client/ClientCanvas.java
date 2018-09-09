@@ -14,6 +14,7 @@ public class ClientCanvas extends Canvas {
     public ClientCanvas(){
         instructionsList = new Vector <DrawingInstruction>();
     }
+
     private void draw() {
         synchronized (instructionsList) {
             GraphicsContext g = getGraphicsContext2D();
