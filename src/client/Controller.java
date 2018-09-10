@@ -1,7 +1,11 @@
 package client;
 
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
@@ -9,6 +13,9 @@ import utils.DrawingInstruction;
 import utils.Message;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Observable;
 
 
 public class Controller
@@ -20,7 +27,6 @@ public class Controller
     private static final int MAX_SIZE = 20;
     private static final int INITIAL_SIZE = 5;
     private static final String SYSTEM_NAME = "System";
-    private static final Shape INITIAL_SHAPE = Shape.SQUARE;
 
     /* =================================
                 FXLM variables
@@ -37,9 +43,13 @@ public class Controller
     @FXML
     private TextField username;
     @FXML
-    ComboBox<Integer> sizePicker;
+    private ComboBox<Integer> sizePicker;
     @FXML
-    Button connect;
+    private Button connect;
+    @FXML
+    private ToggleButton circleShape;
+    @FXML
+    private HBox shapeBox;
 
     /* ==========================
             Custom variables
@@ -49,6 +59,7 @@ public class Controller
     private SocketListener listener;
     private boolean connected;
     private String userName;
+    ToggleButton selected;
 
     public Controller()
     {
@@ -83,6 +94,10 @@ public class Controller
     @FXML
     private void initialize()
     {
+        selected = circleShape;
+        selected.setSelected(true);
+        ObservableList<Node> shapeBoxChildren =  shapeBox.getChildren();
+        Iterator<Node> iter = shapeBoxChildren.iterator();
 
         //Initializing ComboBox
         for(int i = 1; i<MAX_SIZE; i++ ){
@@ -101,7 +116,7 @@ public class Controller
                 double relativeX = ((e.getX() + 0.0) / clientCanvas.getWidth());
                 double relativeY = ((e.getY() + 0.0) / clientCanvas.getHeight());
                 if (relativeX <= 1 && relativeY <= 1 && relativeX >= 0 && relativeY >= 0) {
-                    socket.sendInstruction(relativeX, relativeY, sizePicker.getValue(), INITIAL_SHAPE, colorPicker.getValue());
+                    socket.sendInstruction(relativeX, relativeY, sizePicker.getValue(), Shape.getShapeFromId(selected.getId()), colorPicker.getValue());
                 }
             }
                 });
@@ -117,6 +132,7 @@ public class Controller
     {
         Color x = colorPicker.getValue();
         clientCanvas.getGraphicsContext2D().setFill(x);
+
     }
 
 
@@ -152,5 +168,13 @@ public class Controller
         userName = trimmedUsername;
         username.setText(trimmedUsername);
 
+    }
+
+    @FXML
+    private void toggle(ActionEvent actionEvent) {
+        ToggleButton event = (ToggleButton) actionEvent.getSource();
+        selected.setSelected(false);
+        selected = event;
+        event.setSelected(true);
     }
 }

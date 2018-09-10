@@ -24,7 +24,12 @@ public class ClientCanvas extends Canvas {
                 g.setFill(current.getColor());
                 int x = (int) Math.ceil(current.getX() * getWidth());
                 int y = (int) Math.ceil(current.getY() * getHeight());
-                g.fillRect(x, y, current.getSize(), current.getSize());
+                if(current.getShape() == Shape.SQUARE){
+                    g.fillRect(x, y, current.getSize(), current.getSize());
+                }
+                else if(current.getShape() == Shape.CIRCLE){
+                    g.fillOval(x , y, current.getSize(), current.getSize());
+                }
             }
 
             instructionsList = new Vector<DrawingInstruction>();

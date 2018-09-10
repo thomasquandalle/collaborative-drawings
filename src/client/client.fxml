@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -20,9 +21,15 @@
          <children>
             <ColorPicker fx:id="colorPicker" maxWidth="1.7976931348623157E308" onAction="#changeColor" prefHeight="56.0" prefWidth="111.0" />
             <ComboBox fx:id="sizePicker" prefHeight="25.0" prefWidth="204.0" />
+            <HBox fx:id="shapeBox" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ToggleButton fx:id="circleShape" mnemonicParsing="false" onAction="#toggle" text="•" />
+                  <ToggleButton fx:id="squareShape" mnemonicParsing="false" onAction="#toggle" text="■" />
+               </children>
+            </HBox>
          </children>
       </VBox>
-      <AnchorPane maxHeight="800.0" maxWidth="800.0" HBox.hgrow="ALWAYS">
+      <AnchorPane maxHeight="800.0" maxWidth="800.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
          <children>
             <ClientCanvas fx:id="clientCanvas" height="800.0" width="800.0" AnchorPane.rightAnchor="0.0">
                <cursor>
@@ -40,9 +47,9 @@
                </children>
             </HBox>
             <Button fx:id="connect" mnemonicParsing="false" onAction="#connect" prefHeight="25.0" prefWidth="392.0" text="Connect" />
-            <ScrollPane hbarPolicy="NEVER" hvalue="1.0" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="1.0">
+            <ScrollPane hbarPolicy="NEVER" hvalue="0.5" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="0.5">
                <content>
-                  <TextFlow prefHeight="718.0" prefWidth="363.0">
+                  <TextFlow prefHeight="278.0" prefWidth="363.0">
                      <children>
                         <Text fx:id="outputText" strokeType="OUTSIDE" strokeWidth="0.0" />
                      </children>
