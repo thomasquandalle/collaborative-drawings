@@ -2,20 +2,18 @@ package client;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 import utils.DrawingInstruction;
 import utils.Message;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Observable;
 
 
 public class Controller
