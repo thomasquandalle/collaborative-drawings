@@ -21,12 +21,14 @@
          <children>
             <ColorPicker fx:id="colorPicker" maxWidth="1.7976931348623157E308" onAction="#changeColor" prefHeight="56.0" prefWidth="111.0" />
             <ComboBox fx:id="sizePicker" prefHeight="25.0" prefWidth="204.0" />
-            <HBox fx:id="shapeBox" prefHeight="100.0" prefWidth="200.0">
+            <HBox fx:id="shapeBox" prefHeight="27.0" prefWidth="200.0">
                <children>
                   <ToggleButton fx:id="circleShape" mnemonicParsing="false" onAction="#toggle" text="•" />
                   <ToggleButton fx:id="squareShape" mnemonicParsing="false" onAction="#toggle" text="■" />
                </children>
             </HBox>
+            <Button mnemonicParsing="false" onAction="#save" text="Save" />
+            <Button mnemonicParsing="false" onAction="#load" text="Load" />
          </children>
       </VBox>
       <AnchorPane maxHeight="800.0" maxWidth="800.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">

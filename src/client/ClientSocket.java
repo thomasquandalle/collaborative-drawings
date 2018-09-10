@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.Vector;
 
 class ClientSocket extends Socket {
 
@@ -48,6 +50,14 @@ class ClientSocket extends Socket {
 			e.printStackTrace();
 		}
 	}
+
+    void sendInstruction(DrawingInstruction toSend) {
+        try {
+            sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	void sendMessage(String message, String sender) {
 	    String trimmedMessage = message.trim();
@@ -76,6 +86,17 @@ class ClientSocket extends Socket {
             close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Vector<DrawingInstruction> getLog() {
+        return clientListener.getDrawingLog();
+    }
+
+    public void readLog(Vector<DrawingInstruction> test) {
+	    Iterator<DrawingInstruction> iter = test.iterator();
+	    while(iter.hasNext()){
+            sendInstruction(iter.next());
         }
     }
 }

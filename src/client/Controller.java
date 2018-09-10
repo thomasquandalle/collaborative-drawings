@@ -1,19 +1,18 @@
 package client;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import utils.DrawingInstruction;
 import utils.Message;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.io.*;
+import java.util.Vector;
 
 
 public class Controller
@@ -57,7 +56,7 @@ public class Controller
     private SocketListener listener;
     private boolean connected;
     private String userName;
-    ToggleButton selected;
+    private ToggleButton selected;
 
     public Controller()
     {
@@ -94,13 +93,11 @@ public class Controller
     {
         selected = circleShape;
         selected.setSelected(true);
-        ObservableList<Node> shapeBoxChildren =  shapeBox.getChildren();
-        Iterator<Node> iter = shapeBoxChildren.iterator();
 
         //Initializing ComboBox
         for(int i = 1; i<MAX_SIZE; i++ ){
             sizePicker.getItems().add(i);
-        };
+        }
         sizePicker.setValue(INITIAL_SIZE);
 
         //Disable as long as you're not connected
@@ -174,5 +171,48 @@ public class Controller
         selected.setSelected(false);
         selected = event;
         event.setSelected(true);
+    }
+
+    @FXML
+    private void save(){
+        FileChooser saveDialog = new FileChooser();
+        saveDialog.setTitle("Save your drawing");
+        File path = saveDialog.showSaveDialog(shapeBox.getScene().getWindow());
+        if(path != null && path.canWrite()){
+            try {
+                FileOutputStream fileWrite = new FileOutputStream(path);
+                System.out.println(fileWrite);
+                ObjectOutputStream out = new ObjectOutputStream(fileWrite);
+                Vector<DrawingInstruction> log = socket.getLog();
+                out.writeObject(log);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    private void load(){
+        FileChooser saveDialog = new FileChooser();
+        saveDialog.setTitle("Open your drawing");
+        File path = saveDialog.showOpenDialog(shapeBox.getScene().getWindow());
+        if(path != null){
+            try {
+                FileInputStream fileWrite = new FileInputStream(path);
+                Vector <DrawingInstruction> test;
+                try (ObjectInputStream out = new ObjectInputStream(fileWrite)) {
+                    test = (Vector <DrawingInstruction>) out.readObject();
+                    socket.readLog(test);
+                }
+                catch(StreamCorruptedException e){
+                    e.getLocalizedMessage();
+                    addMessage(new Message("System", "Invalid file chosen"));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
