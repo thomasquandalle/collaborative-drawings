@@ -47,6 +47,10 @@ public class Controller
     private ToggleButton circleShape;
     @FXML
     private HBox shapeBox;
+    @FXML
+    private MenuItem save;
+    @FXML
+    private MenuItem load;
 
     /* ==========================
             Custom variables
@@ -91,8 +95,12 @@ public class Controller
     @FXML
     private void initialize()
     {
+
+        //INITIALIZE FIRST VALUES
         selected = circleShape;
         selected.setSelected(true);
+        colorPicker.setValue(new Color(0,0,0,1));
+        userName = username.getText();
 
         //Initializing ComboBox
         for(int i = 1; i<MAX_SIZE; i++ ){
@@ -100,11 +108,13 @@ public class Controller
         }
         sizePicker.setValue(INITIAL_SIZE);
 
-        //Disable as long as you're not connected
+        //DISABLE CONNECTION-REQUIRED COMPONENTS
         clientCanvas.setDisable(true);
         chatEntry.setDisable(true);
+        save.setDisable(true);
+        load.setDisable(true);
 
-
+        //INITIALIZE CANVAS LISTENER
         clientCanvas.addEventHandler(MouseEvent.ANY,
                 e -> {
             if(e.getEventType() == MouseEvent.MOUSE_DRAGGED){
@@ -116,9 +126,6 @@ public class Controller
             }
                 });
 
-        colorPicker.setValue(new Color(0,0,0,1));
-
-        userName = username.getText();
     }
 
 
@@ -141,10 +148,17 @@ public class Controller
     private void connect(){
         connect.setDisable(true);
         try {
+            //CONNECT
             socket = new ClientSocket(listener);
+
+            //ABLE THE BUTTONS
             chatEntry.setDisable(false);
             clientCanvas.setDisable(false);
             connected  = true;
+            load.setDisable(false);
+            save.setDisable(false);
+
+            //SEND CONFIRMATION ON UI
             socket.sendMessage(username.getText() + " just connected to the server", SYSTEM_NAME);
         } catch (IOException e) {
             addMessage(new Message(SYSTEM_NAME, "Couldn't connect to the server, please try again"));
@@ -154,12 +168,18 @@ public class Controller
 
     @FXML
     private void setUsername() {
+        //REMOVING USELESS BLANK CARACTERS
         String trimmedUsername = username.getText().trim();
+
+        //USERNAME VERIFICATION
         if(trimmedUsername.equalsIgnoreCase("")){
             username.setText("Anonymous");
             return;
         }
+        //SEND TO SERVER AND OTHER USERS THE CHANGEMENT
         socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
+
+        //CHANGE THE VALUES IN THE CONTROLLER AND THE UI
         userName = trimmedUsername;
         username.setText(trimmedUsername);
 
@@ -193,25 +213,32 @@ public class Controller
 
     @FXML
     private void load(){
+        //Create file chooser
         FileChooser saveDialog = new FileChooser();
         saveDialog.setTitle("Open your drawing");
+
+        //Get the path
         File path = saveDialog.showOpenDialog(shapeBox.getScene().getWindow());
         if(path != null){
             try {
+                //Load the file in the software
                 FileInputStream fileWrite = new FileInputStream(path);
-                Vector <DrawingInstruction> test;
-                try (ObjectInputStream out = new ObjectInputStream(fileWrite)) {
-                    test = (Vector <DrawingInstruction>) out.readObject();
-                    socket.readLog(test);
+                Vector <DrawingInstruction> toSend = new Vector <DrawingInstruction>();
+                try {
+                    //Try to read the log in the file
+                    ObjectInputStream in = new ObjectInputStream(fileWrite);
+                    toSend = (Vector <DrawingInstruction>) in.readObject();
                 }
                 catch(StreamCorruptedException e){
-                    e.getLocalizedMessage();
                     addMessage(new Message("System", "Invalid file chosen"));
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
+
+                //Send the log to the server
+                socket.readLog(toSend);
             } catch (IOException e) {
-                e.printStackTrace();
+                addMessage(new Message("System", "Couldn't load the file to the server"));
             }
         }
     }
