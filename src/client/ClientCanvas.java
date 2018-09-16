@@ -12,7 +12,7 @@ public class ClientCanvas extends Canvas {
     private Vector<DrawingInstruction> instructionsList;
 
     public ClientCanvas(){
-        instructionsList = new Vector <DrawingInstruction>();
+        instructionsList = new Vector <>();
     }
 
     private void draw() {
@@ -30,9 +30,10 @@ public class ClientCanvas extends Canvas {
                 else if(current.getShape() == Shape.CIRCLE){
                     g.fillOval(x , y, current.getSize(), current.getSize());
                 }
+
             }
 
-            instructionsList = new Vector<DrawingInstruction>();
+            instructionsList = new Vector<>();
         }
     }
 
@@ -42,5 +43,10 @@ public class ClientCanvas extends Canvas {
 
     public void addInstruction(DrawingInstruction instruction) {
         instructionsList.add(instruction);
+    }
+
+    public void clear(){
+        GraphicsContext g =getGraphicsContext2D();
+        g.clearRect(0,0,getHeight(), getWidth());
     }
 }
