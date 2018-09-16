@@ -25,6 +25,13 @@ class ClientSocket extends Socket {
         clientListener = listener;
 		startListening();
 	}
+
+	ClientSocket(SocketListener listener, String ipAddress, int port) throws IOException {
+	    super(InetAddress.getByName(ipAddress), port);
+	    initStreams();
+	    clientListener = listener;
+	    startListening();
+    }
 	
 	private void initStreams() {
 		try {
