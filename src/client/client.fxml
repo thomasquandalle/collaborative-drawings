@@ -2,7 +2,6 @@
 
 <?import javafx.scene.Cursor?>
 <?import client.ClientCanvas?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -18,15 +17,15 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-
-<VBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
    <children>
       <MenuBar>
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" />
-                  <MenuItem fx:id="load" mnemonicParsing="false" onAction="#load" text="Load" />
+                <MenuItem fx:id="connect" mnemonicParsing="false" onAction="#connect" text="Connect" />
+                <MenuItem fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" />
+                <MenuItem fx:id="load" mnemonicParsing="false" onAction="#load" text="Load" />
             </items>
           </Menu>
         </menus>
@@ -62,7 +61,6 @@
                         <TextField fx:id="username" alignment="TOP_LEFT" onAction="#setUsername" prefHeight="25.0" prefWidth="327.0" promptText="Username" text="Anonymous" />
                      </children>
                   </HBox>
-                  <Button fx:id="connect" mnemonicParsing="false" onAction="#connect" prefHeight="25.0" prefWidth="392.0" text="Connect" />
                   <ScrollPane hbarPolicy="NEVER" hvalue="0.5" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="0.5">
                      <content>
                         <TextFlow prefHeight="278.0" prefWidth="363.0">
