@@ -2,16 +2,18 @@ package client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import utils.DrawingInstruction;
 import utils.Message;
 
-import java.io.*;
+import java.io.*;;
 import java.util.Vector;
 
 
@@ -42,7 +44,7 @@ public class Controller
     @FXML
     private ComboBox<Integer> sizePicker;
     @FXML
-    private Button connect;
+    private MenuItem connect;
     @FXML
     private ToggleButton circleShape;
     @FXML
@@ -85,11 +87,11 @@ public class Controller
         if(connected){
             socket.disconnect();
             connected = false;
+            clientCanvas.setDisable(true);
+            chatEntry.setDisable(true);
+            connect.setText("Connect");
+            addMessage(new Message(SYSTEM_NAME, "You've been disconnected from the server"));
         }
-        clientCanvas.setDisable(true);
-        chatEntry.setDisable(true);
-        connect.setDisable(false);
-        addMessage(new Message(SYSTEM_NAME, "You've been disconnected from the server"));
     }
 
     @FXML
@@ -145,11 +147,49 @@ public class Controller
     }
 
     @FXML
-    private void connect(){
+    private void connect() throws IOException {
+
+        if(connect.getText().equalsIgnoreCase("disconnect")){
+            disconnectSocket();
+            outputText.setText("");
+            chatEntry.setText("");
+            clientCanvas.clear();
+
+            return;
+        }
+
+        disconnectSocket();
+
+        //Load what's going to be in the connect dialog
+        FXMLLoader connectRoot = new FXMLLoader(getClass().getResource("connect.fxml"));
+        Pane root =  connectRoot.load();
+
+        ButtonType loginButtonType = new ButtonType("Login", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Dialog<ButtonType> dialog = new Dialog<>();
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setContent(root);
+        dialogPane.getButtonTypes().add(cancelButtonType);
+        dialogPane.getButtonTypes().add(loginButtonType);
+        dialog.showAndWait();
+
+        ButtonBar.ButtonData resultData = dialog.getResult().getButtonData();
+        String ipAdress = "";
+        int port = -1;
+        if (resultData == ButtonBar.ButtonData.OK_DONE) {
+            connectController controllerConnect = connectRoot.getController();
+            ipAdress = controllerConnect.getIPAdress();
+            port = controllerConnect.getPort();
+        }
+
+        if(resultData == ButtonBar.ButtonData.CANCEL_CLOSE){
+            return;
+        }
         connect.setDisable(true);
+        connect.setText("Disconnect");
         try {
             //CONNECT
-            socket = new ClientSocket(listener);
+            socket = new ClientSocket(listener, ipAdress, port);
 
             //ABLE THE BUTTONS
             chatEntry.setDisable(false);
@@ -162,8 +202,9 @@ public class Controller
             socket.sendMessage(username.getText() + " just connected to the server", SYSTEM_NAME);
         } catch (IOException e) {
             addMessage(new Message(SYSTEM_NAME, "Couldn't connect to the server, please try again"));
-            connect.setDisable(false);
+            connect.setText("Connect");
         }
+        connect.setDisable(false);
     }
 
     @FXML

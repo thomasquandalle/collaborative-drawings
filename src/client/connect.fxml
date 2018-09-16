@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.connectController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="116.0" text="IP Adress" />
+            <TextField prefHeight="25.0" prefWidth="166.0" fx:id="address" />
+         </children>
+      </HBox>
+      <HBox prefHeight="112.0" prefWidth="507.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="115.0" text="Port" />
+            <TextField fx:id="port" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
