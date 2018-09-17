@@ -1,20 +1,18 @@
 package client;
 
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class connectController {
+public class ConnectController {
 
     public TextField port;
     public TextField address;
 
 
 
-    public connectController(){
+    public ConnectController(){
 
     }
 
