@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.connectController">
-   <children>
+<VBox xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.ConnectController">
+   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="506.0"
+          text="Connection to the server"/>
       <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Label prefHeight="17.0" prefWidth="116.0" text="IP Adress" />
-            <TextField prefHeight="25.0" prefWidth="166.0" fx:id="address" />
-         </children>
+      <Label alignment="CENTER" prefHeight="100.0" prefWidth="224.0" text="IP Adress" textAlignment="CENTER"/>
+            <TextField fx:id="address" prefHeight="25.0" prefWidth="170.0">
+               <HBox.margin>
+            <Insets top="38.0"/>
+         </HBox.margin>
+      </TextField>
       </HBox>
       <HBox prefHeight="112.0" prefWidth="507.0">
          <children>
-            <Label prefHeight="17.0" prefWidth="115.0" text="Port" />
-            <TextField fx:id="port" />
+            <Label alignment="CENTER" prefHeight="112.0" prefWidth="224.0" text="Port" textAlignment="CENTER">
+               <HBox.margin>
+               <Insets/>
+            </HBox.margin>
+         </Label>
+            <TextField fx:id="port" prefHeight="25.0" prefWidth="170.0">
+               <HBox.margin>
+               <Insets top="36.0"/>
+            </HBox.margin>
+         </TextField>
          </children>
       </HBox>
-   </children>
 </VBox>
