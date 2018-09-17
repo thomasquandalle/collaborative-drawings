@@ -46,7 +46,7 @@ public class ClientCanvas extends Canvas {
     }
 
     public void clear(){
-        GraphicsContext g =getGraphicsContext2D();
-        g.clearRect(0,0,getHeight(), getWidth());
+        GraphicsContext g = getGraphicsContext2D();
+        g.clearRect(0,0, getWidth(), getHeight());
     }
 }
