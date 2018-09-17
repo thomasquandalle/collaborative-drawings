@@ -2,11 +2,9 @@ package client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -88,6 +86,7 @@ public class Controller
             socket.disconnect();
             connected = false;
             clientCanvas.setDisable(true);
+            clientCanvas.clear();
             chatEntry.setDisable(true);
             connect.setText("Connect");
             addMessage(new Message(SYSTEM_NAME, "You've been disconnected from the server"));
@@ -161,23 +160,18 @@ public class Controller
         disconnectSocket();
 
         //Load what's going to be in the connect dialog
-        FXMLLoader connectRoot = new FXMLLoader(getClass().getResource("connect.fxml"));
-        Pane root =  connectRoot.load();
+        String[] buttonsText = {"Login", "Cancel"};
+        ButtonBar.ButtonData[] types = {ButtonBar.ButtonData.OK_DONE, ButtonBar.ButtonData.CANCEL_CLOSE};
 
-        ButtonType loginButtonType = new ButtonType("Login", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        Dialog<ButtonType> dialog = new Dialog<>();
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.setContent(root);
-        dialogPane.getButtonTypes().add(cancelButtonType);
-        dialogPane.getButtonTypes().add(loginButtonType);
+        PopUpWindow dialog = new PopUpWindow("connect.fxml", buttonsText , types);
         dialog.showAndWait();
-
         ButtonBar.ButtonData resultData = dialog.getResult().getButtonData();
+
+
         String ipAdress = "";
         int port = -1;
         if (resultData == ButtonBar.ButtonData.OK_DONE) {
-            connectController controllerConnect = connectRoot.getController();
+            ConnectController controllerConnect = dialog.getController();
             ipAdress = controllerConnect.getIPAdress();
             port = controllerConnect.getPort();
         }
