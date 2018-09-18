@@ -4,7 +4,6 @@
 <?import client.ClientCanvas?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -60,13 +59,7 @@
             </AnchorPane>
             <VBox maxHeight="800.0" maxWidth="388.0" minHeight="100.0" minWidth="100.0" prefHeight="800.0" prefWidth="388.0" HBox.hgrow="ALWAYS">
                <children>
-                  <HBox prefHeight="25.0" prefWidth="200.0">
-                     <children>
-                        <Label prefHeight="25.0" prefWidth="78.0" text="Username:" />
-                        <TextField fx:id="username" alignment="TOP_LEFT" onAction="#setUsername" prefHeight="25.0" prefWidth="327.0" promptText="Username" />
-                     </children>
-                  </HBox>
-                  <ScrollPane hbarPolicy="NEVER" hvalue="0.5" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="0.5">
+                  <ScrollPane hbarPolicy="NEVER" hvalue="0.5" prefHeight="774.0" prefWidth="388.0" vbarPolicy="ALWAYS" vvalue="0.5">
                      <content>
                         <TextFlow prefHeight="278.0" prefWidth="363.0">
                            <children>

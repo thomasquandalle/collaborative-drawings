@@ -42,8 +42,6 @@ public class Controller
     @FXML
     private TextField chatEntry;
     @FXML
-    private TextField username;
-    @FXML
     private ComboBox<Integer> sizePicker;
     @FXML
     private MenuItem connect;
@@ -150,9 +148,25 @@ public class Controller
         new ObjectOutputStream(new FileOutputStream(settingsFile)).writeObject(settings);
     }
 
-    private void setUsername(String newName){
-        username.setText(newName);
-        setUsername();
+    private void setUsername(String username) {
+        //REMOVING USELESS BLANK CHARACTERS
+        String trimmedUsername = username.trim();
+
+        //USERNAME VERIFICATION
+        if(trimmedUsername.equalsIgnoreCase("")){
+            userName = "Anonymous";
+            return;
+        }
+
+        if(connected){
+            //SEND TO SERVER AND OTHER USERS THE CHANGE
+            socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
+        }
+
+
+        //CHANGE THE VALUES IN THE CONTROLLER AND THE UI
+        userName = trimmedUsername;
+
     }
 
 
@@ -201,7 +215,7 @@ public class Controller
 
     @FXML
     private void sendMessage() {
-        socket.sendMessage(chatEntry.getText(), username.getText());
+        socket.sendMessage(chatEntry.getText(), userName);
         chatEntry.setText("");
     }
 
@@ -253,7 +267,7 @@ public class Controller
 
 
             //SEND CONFIRMATION ON UI
-            socket.sendMessage(username.getText() + " just connected to the server", SYSTEM_NAME);
+            socket.sendMessage(userName + " just connected to the server", SYSTEM_NAME);
         } catch (IOException e) {
             addMessage(new Message(SYSTEM_NAME, "Couldn't connect to the server, please try again"));
             connect.setText("Connect");
@@ -261,28 +275,6 @@ public class Controller
         connect.setDisable(false);
     }
 
-    @FXML
-    private void setUsername() {
-        //REMOVING USELESS BLANK CHARACTERS
-        String trimmedUsername = username.getText().trim();
-
-        //USERNAME VERIFICATION
-        if(trimmedUsername.equalsIgnoreCase("")){
-            username.setText("Anonymous");
-            return;
-        }
-
-        if(connected){
-            //SEND TO SERVER AND OTHER USERS THE CHANGE
-            socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
-        }
-
-
-        //CHANGE THE VALUES IN THE CONTROLLER AND THE UI
-        userName = trimmedUsername;
-        username.setText(trimmedUsername);
-
-    }
 
     @FXML
     private void toggle(ActionEvent actionEvent) {
@@ -346,11 +338,12 @@ public class Controller
         String[] buttonsText = {"Save", "Cancel"};
         ButtonBar.ButtonData[] types = {ButtonBar.ButtonData.OK_DONE, ButtonBar.ButtonData.CANCEL_CLOSE};
         PopUpWindow settingsWindow = new PopUpWindow("../fxmlFiles/settings.fxml", "Settings", buttonsText, types);
-        ( (SettingsController) settingsWindow.getController()).setSettings(settings);
+        settingsWindow.getController().setSettings(settings);
         settingsWindow.showAndWait();
         ButtonBar.ButtonData resultData = settingsWindow.getResult().getButtonData();
         if (resultData == ButtonBar.ButtonData.OK_DONE) {
             settings = ( (SettingsController) settingsWindow.getController()).getSettings();
+            setUsername(settings.getSettings()[0]);
             try {
                 writeSettings();
             } catch (IOException e) {
