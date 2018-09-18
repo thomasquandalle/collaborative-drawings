@@ -12,21 +12,15 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.Vector;
 
-class ClientSocket extends Socket {
+public class ClientSocket extends Socket {
 
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
 	private SocketListener clientListener;
 	private ListenerThread listenerThread;
 
-	ClientSocket(SocketListener listener) throws IOException {
-		super(InetAddress.getLocalHost(), 9999);
-		initStreams();
-        clientListener = listener;
-		startListening();
-	}
 
-	ClientSocket(SocketListener listener, String ipAddress, int port) throws IOException {
+	public ClientSocket(SocketListener listener, String ipAddress, int port) throws IOException {
 	    super(InetAddress.getByName(ipAddress), port);
 	    initStreams();
 	    clientListener = listener;
@@ -49,7 +43,7 @@ class ClientSocket extends Socket {
         listenerThread.start();
     }
 
-	void sendInstruction(double relativeX, double relativeY, int size, Shape shape, Color color) {
+	public void sendInstruction(double relativeX, double relativeY, int size, Shape shape, Color color) {
 		DrawingInstruction toSend  = new DrawingInstruction(relativeX, relativeY, size, shape, color);
 		try {
             sendToServer(toSend);
@@ -58,7 +52,7 @@ class ClientSocket extends Socket {
 		}
 	}
 
-    void sendInstruction(DrawingInstruction toSend) {
+    public void sendInstruction(DrawingInstruction toSend) {
         try {
             sendToServer(toSend);
         } catch (IOException e) {
@@ -66,7 +60,7 @@ class ClientSocket extends Socket {
         }
     }
 	
-	void sendMessage(String message, String sender) {
+	public void sendMessage(String message, String sender) {
 	    String trimmedMessage = message.trim();
 	    if(trimmedMessage.equalsIgnoreCase("")){
 	        return;
@@ -85,7 +79,7 @@ class ClientSocket extends Socket {
         outputStream.flush();
     }
 
-    void disconnect() {
+    public void disconnect() {
         listenerThread.disconnect();
         try {
             inputStream.close();

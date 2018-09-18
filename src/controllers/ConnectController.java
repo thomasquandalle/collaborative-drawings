@@ -1,11 +1,12 @@
-package client;
+package controllers;
 
 import javafx.scene.control.TextField;
+import utils.Settings;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class ConnectController {
+public class ConnectController extends PopUpController{
 
     public TextField port;
     public TextField address;
@@ -18,11 +19,11 @@ public class ConnectController {
 
 
     public void initialize(){
-        try {
-            address.setText( InetAddress.getLocalHost().getHostAddress());
-        } catch (UnknownHostException e) {
-        }
-            port.setText(9999+"");
+    }
+
+    public void setSettings(Settings settings){
+        address.setText(settings.getSettings()[1]);
+        port.setText(settings.getSettings()[2]);
     }
 
 

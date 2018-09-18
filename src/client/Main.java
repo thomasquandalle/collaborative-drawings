@@ -1,6 +1,7 @@
 package client;
 import java.io.IOException;
 
+import controllers.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,7 +21,7 @@ public class Main extends Application
     public void start(Stage stage) throws IOException
     {
         // Create the Pane and all Details
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("client.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxmlFiles/client.fxml"));
         Pane root =  loader.load();
         stage.setMaxWidth(1425);
         stage.setMaxHeight(1000);

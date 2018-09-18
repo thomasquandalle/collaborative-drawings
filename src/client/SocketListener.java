@@ -1,5 +1,6 @@
 package client;
 
+import controllers.Controller;
 import utils.DrawingInstruction;
 import utils.Message;
 

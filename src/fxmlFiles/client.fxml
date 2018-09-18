@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Controller">
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Controller">
    <children>
       <MenuBar>
         <menus>
@@ -28,6 +28,11 @@
                 <MenuItem fx:id="load" mnemonicParsing="false" onAction="#load" text="Load" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Settings">
+               <items>
+                  <MenuItem fx:id="settings" mnemonicParsing="false" onAction="#openSettings" text="Preferences..." />
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1386.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="800.0" prefWidth="1386.0">
@@ -58,7 +63,7 @@
                   <HBox prefHeight="25.0" prefWidth="200.0">
                      <children>
                         <Label prefHeight="25.0" prefWidth="78.0" text="Username:" />
-                        <TextField fx:id="username" alignment="TOP_LEFT" onAction="#setUsername" prefHeight="25.0" prefWidth="327.0" promptText="Username" text="Anonymous" />
+                        <TextField fx:id="username" alignment="TOP_LEFT" onAction="#setUsername" prefHeight="25.0" prefWidth="327.0" promptText="Username" />
                      </children>
                   </HBox>
                   <ScrollPane hbarPolicy="NEVER" hvalue="0.5" prefHeight="748.0" prefWidth="200.0" vbarPolicy="ALWAYS" vvalue="0.5">

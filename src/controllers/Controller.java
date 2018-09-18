@@ -1,5 +1,6 @@
-package client;
+package controllers;
 
+import client.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,8 +11,11 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import utils.DrawingInstruction;
 import utils.Message;
+import utils.Settings;
 
-import java.io.*;;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Vector;
 
 
@@ -62,12 +66,47 @@ public class Controller
     private String userName;
     private ToggleButton selected;
 
+    private Settings settings;
+
+
     public Controller()
     {
+        String localHostString = "";
+
+
+        try{
+            localHostString = InetAddress.getLocalHost().getHostAddress();
+        }
+        catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         listener = new SocketListener(this);
+        File settingsFile = new File("settings.dat");
+
+            if(!settingsFile.exists()){
+
+
+            settings  = new Settings("Anonymous", localHostString, "9999");
+
+            try {
+                writeSettings();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                settings = (Settings) new ObjectInputStream(new FileInputStream(settingsFile)).readObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                settings  = new Settings("Anonymous", localHostString, "9999");
+            }
+        }
     }
 
-    void addMessage(Message message){
+    public void addMessage(Message message){
         //First message
         if(outputText.getText().equalsIgnoreCase("")){
             outputText.setText(message.getMessage());
@@ -76,32 +115,56 @@ public class Controller
         outputText.setText(outputText.getText()+"\n"+message.getMessage());
     }
 
-    void addInstruction(DrawingInstruction instruction){
+    public void addInstruction(DrawingInstruction instruction){
         clientCanvas.addInstruction(instruction);
         clientCanvas.update();
     }
 
-    void disconnectSocket(){
+    public void disconnectSocket(){
         if(connected){
             socket.disconnect();
+            disableComponents();
             connected = false;
-            clientCanvas.setDisable(true);
             clientCanvas.clear();
-            chatEntry.setDisable(true);
             connect.setText("Connect");
             addMessage(new Message(SYSTEM_NAME, "You've been disconnected from the server"));
         }
     }
 
+    private void disableComponents(){
+        clientCanvas.setDisable(true);
+        chatEntry.setDisable(true);
+        save.setDisable(true);
+        load.setDisable(true);
+    }
+
+    private void ableComponents(){
+        chatEntry.setDisable(false);
+        clientCanvas.setDisable(false);
+        load.setDisable(false);
+        save.setDisable(false);
+    }
+
+    private void writeSettings() throws IOException{
+        File settingsFile = new File("settings.dat");
+        new ObjectOutputStream(new FileOutputStream(settingsFile)).writeObject(settings);
+    }
+
+    private void setUsername(String newName){
+        username.setText(newName);
+        setUsername();
+    }
+
+
     @FXML
     private void initialize()
     {
+
 
         //INITIALIZE FIRST VALUES
         selected = circleShape;
         selected.setSelected(true);
         colorPicker.setValue(new Color(0,0,0,1));
-        userName = username.getText();
 
         //Initializing ComboBox
         for(int i = 1; i<MAX_SIZE; i++ ){
@@ -110,10 +173,7 @@ public class Controller
         sizePicker.setValue(INITIAL_SIZE);
 
         //DISABLE CONNECTION-REQUIRED COMPONENTS
-        clientCanvas.setDisable(true);
-        chatEntry.setDisable(true);
-        save.setDisable(true);
-        load.setDisable(true);
+        disableComponents();
 
         //INITIALIZE CANVAS LISTENER
         clientCanvas.addEventHandler(MouseEvent.ANY,
@@ -126,7 +186,7 @@ public class Controller
                 }
             }
                 });
-
+        setUsername(settings.getSettings()[0]);
     }
 
 
@@ -146,7 +206,7 @@ public class Controller
     }
 
     @FXML
-    private void connect() throws IOException {
+    private void connect(){
 
         if(connect.getText().equalsIgnoreCase("disconnect")){
             disconnectSocket();
@@ -163,7 +223,9 @@ public class Controller
         String[] buttonsText = {"Login", "Cancel"};
         ButtonBar.ButtonData[] types = {ButtonBar.ButtonData.OK_DONE, ButtonBar.ButtonData.CANCEL_CLOSE};
 
-        PopUpWindow dialog = new PopUpWindow("connect.fxml", buttonsText , types);
+        PopUpWindow dialog = new PopUpWindow("../fxmlFiles/connect.fxml", "Connect", buttonsText , types);
+        ConnectController controllerConnect = (ConnectController) dialog.getController();
+        controllerConnect.setSettings(settings);
         dialog.showAndWait();
         ButtonBar.ButtonData resultData = dialog.getResult().getButtonData();
 
@@ -171,7 +233,7 @@ public class Controller
         String ipAdress = "";
         int port = -1;
         if (resultData == ButtonBar.ButtonData.OK_DONE) {
-            ConnectController controllerConnect = dialog.getController();
+
             ipAdress = controllerConnect.getIPAdress();
             port = controllerConnect.getPort();
         }
@@ -186,11 +248,9 @@ public class Controller
             socket = new ClientSocket(listener, ipAdress, port);
 
             //ABLE THE BUTTONS
-            chatEntry.setDisable(false);
-            clientCanvas.setDisable(false);
+           ableComponents();
             connected  = true;
-            load.setDisable(false);
-            save.setDisable(false);
+
 
             //SEND CONFIRMATION ON UI
             socket.sendMessage(username.getText() + " just connected to the server", SYSTEM_NAME);
@@ -203,7 +263,7 @@ public class Controller
 
     @FXML
     private void setUsername() {
-        //REMOVING USELESS BLANK CARACTERS
+        //REMOVING USELESS BLANK CHARACTERS
         String trimmedUsername = username.getText().trim();
 
         //USERNAME VERIFICATION
@@ -211,8 +271,12 @@ public class Controller
             username.setText("Anonymous");
             return;
         }
-        //SEND TO SERVER AND OTHER USERS THE CHANGEMENT
-        socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
+
+        if(connected){
+            //SEND TO SERVER AND OTHER USERS THE CHANGE
+            socket.sendMessage( userName + " is now known as " + trimmedUsername, SYSTEM_NAME);
+        }
+
 
         //CHANGE THE VALUES IN THE CONTROLLER AND THE UI
         userName = trimmedUsername;
@@ -236,7 +300,6 @@ public class Controller
         if(path != null && path.canWrite()){
             try {
                 FileOutputStream fileWrite = new FileOutputStream(path);
-                System.out.println(fileWrite);
                 ObjectOutputStream out = new ObjectOutputStream(fileWrite);
                 Vector<DrawingInstruction> log = socket.getLog();
                 out.writeObject(log);
@@ -276,5 +339,27 @@ public class Controller
                 addMessage(new Message("System", "Couldn't load the file to the server"));
             }
         }
+    }
+
+    @FXML
+    private void openSettings() {
+        String[] buttonsText = {"Save", "Cancel"};
+        ButtonBar.ButtonData[] types = {ButtonBar.ButtonData.OK_DONE, ButtonBar.ButtonData.CANCEL_CLOSE};
+        PopUpWindow settingsWindow = new PopUpWindow("../fxmlFiles/settings.fxml", "Settings", buttonsText, types);
+        ( (SettingsController) settingsWindow.getController()).setSettings(settings);
+        settingsWindow.showAndWait();
+        ButtonBar.ButtonData resultData = settingsWindow.getResult().getButtonData();
+        if (resultData == ButtonBar.ButtonData.OK_DONE) {
+            settings = ( (SettingsController) settingsWindow.getController()).getSettings();
+            try {
+                writeSettings();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(resultData == ButtonBar.ButtonData.CANCEL_CLOSE){
+            return;
+        }
+
     }
 }

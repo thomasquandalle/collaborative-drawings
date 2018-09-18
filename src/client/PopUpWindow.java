@@ -1,5 +1,7 @@
 package client;
 
+import controllers.ConnectController;
+import controllers.PopUpController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -12,17 +14,17 @@ import java.io.IOException;
 public class PopUpWindow extends Dialog<ButtonType>{
     FXMLLoader loader;
 
-    public PopUpWindow(String fxmlFile, String[] buttonsText, ButtonBar.ButtonData[] types){
+    public PopUpWindow(String fxmlFile, String title,String[] buttonsText, ButtonBar.ButtonData[] types){
         super();
         loader = new FXMLLoader(getClass().getResource(fxmlFile));
         Pane root = null;
         try {
             root = loader.load();
         } catch (IOException e) {
-            System.out.println("Couldn't load the fwml file");
+            System.out.println("Couldn't load the fxml file");
             return;
         }
-
+        setTitle(title);
         //Adding the buttons
         DialogPane dialogPane = getDialogPane();
         dialogPane.setContent(root);
@@ -34,7 +36,7 @@ public class PopUpWindow extends Dialog<ButtonType>{
         }
     }
 
-    public ConnectController getController(){
+    public PopUpController getController(){
         return loader.getController();
     }
 

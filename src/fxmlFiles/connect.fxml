@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.172" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="client.ConnectController">
+      fx:controller="controllers.ConnectController">
    <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="506.0"
           text="Connection to the server"/>
       <HBox prefHeight="100.0" prefWidth="200.0">
