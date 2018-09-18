@@ -9,13 +9,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import utils.Commands;
 import utils.DrawingInstruction;
 import utils.Message;
 import utils.Settings;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 
@@ -131,13 +135,11 @@ public class Controller
 
     private void disableComponents(){
         clientCanvas.setDisable(true);
-        chatEntry.setDisable(true);
         save.setDisable(true);
         load.setDisable(true);
     }
 
     private void ableComponents(){
-        chatEntry.setDisable(false);
         clientCanvas.setDisable(false);
         load.setDisable(false);
         save.setDisable(false);
@@ -148,9 +150,9 @@ public class Controller
         new ObjectOutputStream(new FileOutputStream(settingsFile)).writeObject(settings);
     }
 
-    private void setUsername(String username) {
+    public void setUsername(String username) {
         //REMOVING USELESS BLANK CHARACTERS
-        String trimmedUsername = username.trim();
+        String trimmedUsername = username.trim().split(" ")[0];
 
         //USERNAME VERIFICATION
         if(trimmedUsername.equalsIgnoreCase("")){
@@ -166,7 +168,23 @@ public class Controller
 
         //CHANGE THE VALUES IN THE CONTROLLER AND THE UI
         userName = trimmedUsername;
+    }
 
+    /* =================================
+                Commands methods
+    ==================================== */
+    public void connect(ArrayList<String> args){
+        if(args.size() == 0){
+            this.connect();
+        }
+    }
+
+    public void setUsername(ArrayList<String> args){
+        if(args.size()==0){
+            addMessage(new Message("System", "Your current username is "+ userName));
+            return;
+        }
+        setUsername(args.remove(0));
     }
 
 
@@ -215,9 +233,34 @@ public class Controller
 
     @FXML
     private void sendMessage() {
-        socket.sendMessage(chatEntry.getText(), userName);
+
+        String message = chatEntry.getText();
         chatEntry.setText("");
+        if(message.length() == 0) return;
+
+        char firstLetter = message.trim().charAt(0);
+        if(firstLetter == '/'){ //It's a command or an attempt to
+            String[] split = message.split(" ");
+            String command = split[0];
+            String[] args = Arrays.copyOfRange(split, 1, split.length);
+
+            ArrayList<String> methodAndArgs = Commands.getMethodAndArgsString(command, args);
+            if(methodAndArgs.size()>0){
+                String method = methodAndArgs.remove(0);
+
+                try {
+                    getClass().getMethod(method, ArrayList.class).invoke(this, methodAndArgs);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        else if(connected){
+            socket.sendMessage(message, userName);
+        }
     }
+
 
     @FXML
     private void connect(){
