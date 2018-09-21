@@ -4,15 +4,15 @@ import client.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import utils.Commands;
-import utils.DrawingInstruction;
-import utils.Message;
-import utils.Settings;
+import utils.*;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +57,8 @@ public class Controller
     private MenuItem save;
     @FXML
     private MenuItem load;
+    @FXML
+    private MenuItem importImage;
 
     /* ==========================
             Custom variables
@@ -137,11 +139,13 @@ public class Controller
         clientCanvas.setDisable(true);
         save.setDisable(true);
         load.setDisable(true);
+        importImage.setDisable(true);
     }
 
     private void ableComponents(){
         clientCanvas.setDisable(false);
         load.setDisable(false);
+        importImage.setDisable(false);
         save.setDisable(false);
     }
 
@@ -186,7 +190,9 @@ public class Controller
         }
         setUsername(args.remove(0));
     }
-
+    public void addImage(NetworkImage reception) {
+            clientCanvas.importImage(reception.getBuffer(), reception.getWidth(), reception.getHeight());
+    }
 
     @FXML
     private void initialize()
@@ -230,6 +236,48 @@ public class Controller
 
     }
 
+    @FXML
+    private void importImage(){
+        //Create file chooser
+        FileChooser saveDialog = new FileChooser();
+        saveDialog.setTitle("Open your drawing");
+
+        //Get the path
+        File path = saveDialog.showOpenDialog(null);
+        if(path != null){
+            try {
+                //Load the file in the software
+                FileInputStream fileWrite = new FileInputStream(path);
+                Image test = new Image(fileWrite, clientCanvas.getWidth(), clientCanvas.getHeight(), true, true);
+
+                while(test.getProgress() != 1){
+                    Thread.sleep(100);
+                }
+                if(!test.isError()){
+                    PixelReader pixelReader = test.getPixelReader();
+                    int width = (int)test.getWidth();
+                    int height = (int)test.getHeight();
+                    byte[] buffer = new byte[width * height * 4];
+                    pixelReader.getPixels(
+                            0,
+                            0,
+                            width,
+                            height,
+                            PixelFormat.getByteBgraInstance(),
+                            buffer,
+                            0,
+                            width * 4
+                    );
+                    socket.sendImage(buffer, width, height);
+                }
+            } catch (IOException e) {
+                addMessage(new Message("System", "Couldn't load the file to the server"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     @FXML
     private void sendMessage() {
@@ -332,12 +380,17 @@ public class Controller
         FileChooser saveDialog = new FileChooser();
         saveDialog.setTitle("Save your drawing");
         File path = saveDialog.showSaveDialog(shapeBox.getScene().getWindow());
-        if(path != null && path.canWrite()){
+        if(path != null){
             try {
                 FileOutputStream fileWrite = new FileOutputStream(path);
                 ObjectOutputStream out = new ObjectOutputStream(fileWrite);
                 Vector<DrawingInstruction> log = socket.getLog();
+                Vector<NetworkImage> image = socket.getImage();
                 out.writeObject(log);
+                out.writeObject(image);
+                out.flush();
+                out.close();
+                System.out.print(path.exists());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -357,10 +410,12 @@ public class Controller
                 //Load the file in the software
                 FileInputStream fileWrite = new FileInputStream(path);
                 Vector <DrawingInstruction> toSend = new Vector <DrawingInstruction>();
+                Vector <NetworkImage> toSendImage = new Vector <NetworkImage>();
                 try {
                     //Try to read the log in the file
                     ObjectInputStream in = new ObjectInputStream(fileWrite);
                     toSend = (Vector <DrawingInstruction>) in.readObject();
+                    toSendImage = (Vector <NetworkImage>) in.readObject();
                 }
                 catch(StreamCorruptedException e){
                     addMessage(new Message("System", "Invalid file chosen"));
@@ -369,7 +424,8 @@ public class Controller
                 }
 
                 //Send the log to the server
-                socket.readLog(toSend);
+                socket.readImageLog(toSendImage);
+                socket.readInstructionLog(toSend);
             } catch (IOException e) {
                 addMessage(new Message("System", "Couldn't load the file to the server"));
             }
@@ -398,4 +454,6 @@ public class Controller
         }
 
     }
+
+
 }

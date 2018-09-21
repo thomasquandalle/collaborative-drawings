@@ -11,8 +11,10 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import sun.nio.ch.Net;
 import utils.DrawingInstruction;
 import utils.Message;
+import utils.NetworkImage;
 
 
 public class ServerManager extends JFrame {
@@ -22,6 +24,7 @@ public class ServerManager extends JFrame {
 	Vector<ServerThread> threadsList;
 	Vector<Message> messageLog;
 	Vector<DrawingInstruction> drawingLog;
+    Vector<NetworkImage> imageLog;
 	JLabel infos;
 	String servInfo;
 	
@@ -33,9 +36,10 @@ public class ServerManager extends JFrame {
 		add(infos);
 		
 		
-		threadsList = new Vector<ServerThread>();
-		messageLog = new Vector<Message>();
-		drawingLog = new Vector<DrawingInstruction>();
+		threadsList = new Vector<>();
+		messageLog = new Vector<>();
+		drawingLog = new Vector<>();
+		imageLog = new Vector<>();
 		
 
 		try {
@@ -100,6 +104,9 @@ public class ServerManager extends JFrame {
 		if(toSend instanceof Message) {
 			messageLog.add((Message) toSend);
 		}
+		if(toSend instanceof NetworkImage){
+		    imageLog.add((NetworkImage) toSend);
+        }
 	}
 
 	public Vector<Message> getMessageLog() {
@@ -109,4 +116,8 @@ public class ServerManager extends JFrame {
 	public Vector<DrawingInstruction> getDrawingLog() {
 		return drawingLog;
 	}
+
+    public Vector<NetworkImage> getImageLog() {
+	    return imageLog;
+    }
 }

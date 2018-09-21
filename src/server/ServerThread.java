@@ -45,9 +45,14 @@ public class ServerThread extends Thread {
 	private void synchronizeClientWithServer() throws IOException {
 		Vector<DrawingInstruction> drawingLog = parent.getDrawingLog();
 		Vector<Message> messageLog = parent.getMessageLog();
+		Vector<NetworkImage> imageLog = parent.getImageLog();
 		Iterator<Message> messageIterator = messageLog.iterator();
 		while(messageIterator.hasNext()) {
 			sendToClient(messageIterator.next());
+		}
+		Iterator<NetworkImage> imageIterator = imageLog.iterator();
+		while(imageIterator.hasNext()) {
+			sendToClient(imageIterator.next());
 		}
 		Iterator<DrawingInstruction> drawingIterator = drawingLog.iterator();
 		while(drawingIterator.hasNext()) {

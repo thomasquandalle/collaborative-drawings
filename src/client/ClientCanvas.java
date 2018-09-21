@@ -2,6 +2,8 @@ package client;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.WritableImage;
 import utils.DrawingInstruction;
 
 import java.util.Iterator;
@@ -40,6 +42,14 @@ public class ClientCanvas extends Canvas {
     public void update(){
         draw();
     }
+
+    public void importImage(byte[] buffer, int width, int height){
+        WritableImage background  = new WritableImage((int)getWidth(),(int) getHeight());
+        background.getPixelWriter().setPixels(0,0, width, height, PixelFormat.getByteBgraInstance(), buffer, 0, width*4);
+        getGraphicsContext2D().drawImage(background, 0,0);
+
+    }
+
 
     public void addInstruction(DrawingInstruction instruction) {
         instructionsList.add(instruction);

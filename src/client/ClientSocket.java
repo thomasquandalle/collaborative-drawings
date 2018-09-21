@@ -1,8 +1,10 @@
 package client;
 
 import javafx.scene.paint.Color;
+import sun.nio.ch.Net;
 import utils.DrawingInstruction;
 import utils.Message;
+import utils.NetworkImage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,9 +20,10 @@ public class ClientSocket extends Socket {
 	private ObjectOutputStream outputStream;
 	private SocketListener clientListener;
 	private ListenerThread listenerThread;
+    private Vector <DrawingInstruction> test;
 
 
-	public ClientSocket(SocketListener listener, String ipAddress, int port) throws IOException {
+    public ClientSocket(SocketListener listener, String ipAddress, int port) throws IOException {
 	    super(InetAddress.getByName(ipAddress), port);
 	    initStreams();
 	    clientListener = listener;
@@ -73,6 +76,15 @@ public class ClientSocket extends Socket {
 		}
 	}
 
+	public void sendImage(byte [] pixelsBuffer, int width, int height){
+        NetworkImage toSend  = new NetworkImage(pixelsBuffer, width, height);
+        try {
+            sendToServer(toSend);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 	private void sendToServer(Object toSend) throws IOException {
         outputStream.writeObject(toSend);
         outputStream.reset();
@@ -94,10 +106,22 @@ public class ClientSocket extends Socket {
         return clientListener.getDrawingLog();
     }
 
-    public void readLog(Vector<DrawingInstruction> test) {
-	    Iterator<DrawingInstruction> iter = test.iterator();
+    public void readInstructionLog(Vector<DrawingInstruction> test) {
+        this.test = test;
+        Iterator<DrawingInstruction> iter = test.iterator();
 	    while(iter.hasNext()){
             sendInstruction(iter.next());
+        }
+    }
+
+    public Vector<NetworkImage> getImage() {
+	    return clientListener.getImage();
+    }
+
+    public void readImageLog(Vector<NetworkImage> toSendImage) throws IOException {
+        Iterator<NetworkImage> iter = toSendImage.iterator();
+        while(iter.hasNext()){
+            sendToServer(iter.next());
         }
     }
 }
