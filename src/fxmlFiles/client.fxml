@@ -25,6 +25,7 @@
                 <MenuItem fx:id="connect" mnemonicParsing="false" onAction="#connect" text="Connect" />
                 <MenuItem fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" />
                 <MenuItem fx:id="load" mnemonicParsing="false" onAction="#load" text="Load" />
+                <MenuItem fx:id="importImage" mnemonicParsing="false" onAction="#importImage" text="Import image" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Settings">
