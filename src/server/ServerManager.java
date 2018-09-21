@@ -25,6 +25,7 @@ public class ServerManager extends JFrame {
 	Vector<Message> messageLog;
 	Vector<DrawingInstruction> drawingLog;
     Vector<NetworkImage> imageLog;
+    Vector<String> order;
 	JLabel infos;
 	String servInfo;
 	
@@ -40,6 +41,7 @@ public class ServerManager extends JFrame {
 		messageLog = new Vector<>();
 		drawingLog = new Vector<>();
 		imageLog = new Vector<>();
+		order = new Vector<>();
 		
 
 		try {
@@ -99,12 +101,14 @@ public class ServerManager extends JFrame {
 			iter.next().sendToClient(toSend);
 		}
 		if(toSend instanceof DrawingInstruction) {
+		    order.add("Instruction");
 			drawingLog.add((DrawingInstruction) toSend);
 		}
 		if(toSend instanceof Message) {
 			messageLog.add((Message) toSend);
 		}
 		if(toSend instanceof NetworkImage){
+		    order.add("Image");
 		    imageLog.add((NetworkImage) toSend);
         }
 	}
@@ -119,5 +123,9 @@ public class ServerManager extends JFrame {
 
     public Vector<NetworkImage> getImageLog() {
 	    return imageLog;
+    }
+
+    public Vector<String> getOrder() {
+	    return order;
     }
 }

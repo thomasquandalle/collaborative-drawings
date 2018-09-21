@@ -46,17 +46,23 @@ public class ServerThread extends Thread {
 		Vector<DrawingInstruction> drawingLog = parent.getDrawingLog();
 		Vector<Message> messageLog = parent.getMessageLog();
 		Vector<NetworkImage> imageLog = parent.getImageLog();
+		Vector<String> order = parent.getOrder();
 		Iterator<Message> messageIterator = messageLog.iterator();
 		while(messageIterator.hasNext()) {
 			sendToClient(messageIterator.next());
 		}
-		Iterator<NetworkImage> imageIterator = imageLog.iterator();
-		while(imageIterator.hasNext()) {
-			sendToClient(imageIterator.next());
-		}
+
+		Iterator<String> orderIterator = order.iterator();
 		Iterator<DrawingInstruction> drawingIterator = drawingLog.iterator();
-		while(drawingIterator.hasNext()) {
-			sendToClient(drawingIterator.next());
+		Iterator<NetworkImage> imageIterator = imageLog.iterator();
+		while(orderIterator.hasNext()){
+			String nextType = orderIterator.next();
+			if(nextType.equalsIgnoreCase("Image")){
+				sendToClient(imageIterator.next());
+			}
+			else if(nextType.equalsIgnoreCase("Instruction")){
+				sendToClient(drawingIterator.next());
+			}
 		}
 	}
 
