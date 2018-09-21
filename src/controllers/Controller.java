@@ -385,9 +385,11 @@ public class Controller
                 FileOutputStream fileWrite = new FileOutputStream(path);
                 ObjectOutputStream out = new ObjectOutputStream(fileWrite);
                 Vector<DrawingInstruction> log = socket.getLog();
-                Vector<NetworkImage> image = socket.getImage();
+                Vector<NetworkImage> image = socket.getImages();
+                Vector<String> order = socket.getOrder();
                 out.writeObject(log);
                 out.writeObject(image);
+                out.writeObject(order);
                 out.flush();
                 out.close();
                 System.out.print(path.exists());
@@ -411,11 +413,13 @@ public class Controller
                 FileInputStream fileWrite = new FileInputStream(path);
                 Vector <DrawingInstruction> toSend = new Vector <DrawingInstruction>();
                 Vector <NetworkImage> toSendImage = new Vector <NetworkImage>();
+                Vector<String> order = new Vector <>();
                 try {
                     //Try to read the log in the file
                     ObjectInputStream in = new ObjectInputStream(fileWrite);
                     toSend = (Vector <DrawingInstruction>) in.readObject();
                     toSendImage = (Vector <NetworkImage>) in.readObject();
+                    order = (Vector<String>) in.readObject();
                 }
                 catch(StreamCorruptedException e){
                     addMessage(new Message("System", "Invalid file chosen"));
@@ -424,8 +428,7 @@ public class Controller
                 }
 
                 //Send the log to the server
-                socket.readImageLog(toSendImage);
-                socket.readInstructionLog(toSend);
+                socket.loadSave(toSend, toSendImage, order);
             } catch (IOException e) {
                 addMessage(new Message("System", "Couldn't load the file to the server"));
             }

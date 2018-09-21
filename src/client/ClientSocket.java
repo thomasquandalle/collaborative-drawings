@@ -1,7 +1,6 @@
 package client;
 
 import javafx.scene.paint.Color;
-import sun.nio.ch.Net;
 import utils.DrawingInstruction;
 import utils.Message;
 import utils.NetworkImage;
@@ -106,22 +105,28 @@ public class ClientSocket extends Socket {
         return clientListener.getDrawingLog();
     }
 
-    public void readInstructionLog(Vector<DrawingInstruction> test) {
-        this.test = test;
-        Iterator<DrawingInstruction> iter = test.iterator();
-	    while(iter.hasNext()){
-            sendInstruction(iter.next());
-        }
+
+    public Vector<NetworkImage> getImages() {
+	    return clientListener.getImages();
     }
 
-    public Vector<NetworkImage> getImage() {
-	    return clientListener.getImage();
+    public Vector<String> getOrder(){
+        return clientListener.getOrder();
     }
 
-    public void readImageLog(Vector<NetworkImage> toSendImage) throws IOException {
-        Iterator<NetworkImage> iter = toSendImage.iterator();
-        while(iter.hasNext()){
-            sendToServer(iter.next());
+
+    public void loadSave(Vector<DrawingInstruction> drawingLog, Vector<NetworkImage> imageLog, Vector<String> order) throws IOException {
+        Iterator<String> orderIterator = order.iterator();
+        Iterator<DrawingInstruction> drawingIterator = drawingLog.iterator();
+        Iterator<NetworkImage> imageIterator = imageLog.iterator();
+        while(orderIterator.hasNext()){
+            String nextType = orderIterator.next();
+            if(nextType.equalsIgnoreCase("Image")){
+                sendToServer(imageIterator.next());
+            }
+            else if(nextType.equalsIgnoreCase("Instruction")){
+                sendToServer(drawingIterator.next());
+            }
         }
     }
 }

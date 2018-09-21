@@ -12,10 +12,12 @@ public class SocketListener {
     private Controller controller;
     private Vector<DrawingInstruction> drawingLog;
     private Vector<NetworkImage> imageLog;
+    private Vector<String> order;
     public SocketListener(Controller controller){
         this.controller = controller;
         drawingLog = new Vector<>();
         imageLog = new Vector <>();
+        order = new Vector<>();
     }
 
     public void handleRecep(Object reception) {
@@ -23,6 +25,7 @@ public class SocketListener {
                 DrawingInstruction castReception = (DrawingInstruction) reception;
                 addToDrawingLog(castReception);
                 controller.addInstruction(castReception);
+                order.add("Instruction");
             }
             if(reception instanceof Message) {
                 controller.addMessage((Message)(reception));
@@ -30,6 +33,7 @@ public class SocketListener {
             if(reception instanceof NetworkImage){
                 controller.addImage((NetworkImage) reception);
                 imageLog.add((NetworkImage) reception);
+                order.add("Image");
             }
             if(reception instanceof IOException) {
                 controller.disconnectSocket();
@@ -45,7 +49,11 @@ public class SocketListener {
         return drawingLog;
     }
 
-    public Vector<NetworkImage> getImage() {
+    public Vector<NetworkImage> getImages() {
         return imageLog;
+    }
+
+    public Vector<String> getOrder(){
+        return order;
     }
 }
