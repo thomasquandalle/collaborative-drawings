@@ -58,7 +58,7 @@ public class Controller
     @FXML
     private MenuItem load;
     @FXML
-    private MenuItem importImage;
+    private Menu drawing;
 
     /* ==========================
             Custom variables
@@ -139,13 +139,13 @@ public class Controller
         clientCanvas.setDisable(true);
         save.setDisable(true);
         load.setDisable(true);
-        importImage.setDisable(true);
+        drawing.setDisable(true);
     }
 
     private void ableComponents(){
         clientCanvas.setDisable(false);
         load.setDisable(false);
-        importImage.setDisable(false);
+        drawing.setDisable(false);
         save.setDisable(false);
     }
 
@@ -309,6 +309,10 @@ public class Controller
         }
     }
 
+    @FXML
+    private void export(){
+        clientCanvas.exportToPNG();
+    }
 
     @FXML
     private void connect(){
