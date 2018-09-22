@@ -1,11 +1,17 @@
 package client;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
 import utils.DrawingInstruction;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -48,6 +54,29 @@ public class ClientCanvas extends Canvas {
         background.getPixelWriter().setPixels(0,0, width, height, PixelFormat.getByteBgraInstance(), buffer, 0, width*4);
         getGraphicsContext2D().drawImage(background, 0,0);
 
+    }
+
+    public void exportToPNG() {
+        FileChooser fileChooser = new FileChooser();
+
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(null);
+
+        if(file != null){
+            try {
+                WritableImage writableImage = new WritableImage((int)getWidth(), (int)getHeight());
+                snapshot(null, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
